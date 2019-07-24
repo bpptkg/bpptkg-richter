@@ -9,6 +9,11 @@ import subprocess
 from . import utils
 
 
+class LinkError(Exception):
+    """Base link client wrapper error exception."""
+    pass
+
+
 def build_request_file(starttime, endtime, station, network='VG', channel='HHZ',
                        location='00', request_file=None):
     """
@@ -18,8 +23,14 @@ def build_request_file(starttime, endtime, station, network='VG', channel='HHZ',
 
     YYYY,MM,DD,HH,MM,SS YYYY,MM,DD,HH,MM,SS Network Station Channel [Location]
 
+    the Channel, Station and Location, can contains wildcards (*) and the
+    Location field is optional although we explicitly define it in the request
+    file. For matching all locations you can use the '*' symbol, if empty it
+    assumes that only empty locations are being requested.
+
     Example:
 
+    2010,02,18,12,00,00 2010,02,18,12,10,00 GE WLF BH*
     2010,02,18,12,00,00 2010,02,18,12,10,00 GE VSU BH* 00
 
     Note that starttime and endtime for request are in UTC timezone. For more
@@ -83,18 +94,18 @@ class ArcLinkClient(object):
     def _check_required(self):
         for name in self.required_parameters:
             if not getattr(self, name):
-                raise NameError('Parameter {} is required'.format(name))
+                raise LinkError('Parameter {} is required'.format(name))
 
     def _build_cli(self):
         arclink_cmd = utils.find_executable(self.arclink_cli)
         if arclink_cmd is None:
-            raise NameError('Could not find arclink_fetch executable')
+            raise LinkError('Could not find arclink_fetch executable')
         command = ['/usr/bin/python', arclink_cmd]
         return command
 
     def _build_cli_arguments(self):
         if not self.request_file:
-            raise NameError('Request file is not built yet')
+            raise LinkError('Request file is not built yet')
 
         args = []
         underscore = '_'
@@ -115,7 +126,13 @@ class ArcLinkClient(object):
         return self._build_cli() + self._build_cli_arguments()
 
     def request(self, *args, **kwargs):
-        """Prepare ArcLink request."""
+        """
+        Prepare ArcLink request.
+
+        It builds the request file and generate random output file it if not
+        explicitly set by user. Positional arguments required are starttime,
+        endtime, and station name.
+        """
         self.request_file = build_request_file(*args, **kwargs)
         output_file = utils.generate_safe_random_filename(
             self.data_format)
