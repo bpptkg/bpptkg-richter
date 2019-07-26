@@ -3,6 +3,7 @@ SeedLink and ArcLink client wrapper.
 """
 
 import os
+import sys
 import tempfile
 import subprocess
 
@@ -80,6 +81,7 @@ class ArcLinkClient(object):
     }
     required_parameters = ['address', 'user']
     arclink_cli = 'arclink_fetch'
+    python_cmd = '/usr/bin/python'
 
     def __init__(self, **kwargs):
         for key, value in self.accepts_parameters.items():
@@ -96,12 +98,19 @@ class ArcLinkClient(object):
             if not getattr(self, name):
                 raise LinkError('Parameter {} is required'.format(name))
 
+        if not os.path.isfile(self.python_cmd):
+            self.python_cmd = utils.find_executable('python')
+            assert sys.version_info < (3, 0), (
+                'Python version 2.x is required to run arclink_fetch. '
+                'Make sure you have Python version 2.x installed. '
+                'Default Python executable is in /usr/bin/python.'
+            )
+
     def _build_cli(self):
         arclink_cmd = utils.find_executable(self.arclink_cli)
         if arclink_cmd is None:
             raise LinkError('Could not find arclink_fetch executable')
-        command = ['/usr/bin/python', arclink_cmd]
-        return command
+        return [self.python_cmd, arclink_cmd]
 
     def _build_cli_arguments(self):
         if not self.request_file:
@@ -148,3 +157,8 @@ class ArcLinkClient(object):
         cli_with_args = self._build_cli_with_args()
         completed_process = subprocess.run(cli_with_args, **kwargs)
         return completed_process
+
+
+class SeedLinkClient(object):
+    """SeedLink client wrapper."""
+    pass
