@@ -6,6 +6,14 @@ magnitude on BPPTKG seismic network.
 import numpy as np
 from . import paz
 
+__all__ = [
+    'filter_stream',
+    'compute_bpptkg_ml',
+    'compute_wa',
+    'compute_ml',
+    'compute_app',
+]
+
 
 def filter_stream(stream, **kwargs):
     """Filter ObsPy stream object."""
