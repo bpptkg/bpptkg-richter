@@ -52,11 +52,11 @@ class ArcLinkTest(unittest.TestCase):
             'station': 'MEPAS',
             'channel': 'HHZ',
         }
-        self.assertDictEqual(client.requests[0], stream_list)
+        self.assertDictEqual(client.request_data[0], stream_list)
 
     def test_request_many(self):
         client = ArcLinkClient()
-        client.request_many(streams=[
+        client.request_many([
             {'starttime': '2019-01-01 00:00:00',
              'endtime': '2019-01-01 01:00:00',
              'network': 'VG', 'station': 'MEPAS', 'channel': ['HHZ', 'EHZ']},

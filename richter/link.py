@@ -118,7 +118,7 @@ class ArcLinkClient(object):
             setattr(self, key, new_value)
         self.request_file = kwargs.pop('request_file', None)
         self.output_path = kwargs.pop('output_path', None)
-        self.requests = []
+        self.request_data = []
 
     def _check_required(self):
         required_parameters = ['address', 'user']
@@ -146,7 +146,7 @@ class ArcLinkClient(object):
         if os.path.exists(self.request_file):
             os.unlink(self.request_file)
 
-        for request in self.requests:
+        for request in self.request_data:
             self._check_request_parameters(request)
 
             build_request_file(
@@ -197,22 +197,25 @@ class ArcLinkClient(object):
         """
         Prepare ArcLink single station request.
         """
-        if not self.requests:
-            self.requests.append({})
-        self.requests[0].update(kwargs)
+        if not self.request_data:
+            self.request_data.append({})
+        self.request_data[0].update(kwargs)
 
-    def request_many(self, **kwargs):
+    def request_many(self, stream_list=None, **kwargs):
         """
         Prepare ArcLink many station request.
         """
-        if kwargs.get('streams'):
-            self.requests = kwargs['streams']
+        if stream_list:
+            if isinstance(stream_list, (list, tuple)):
+                self.request_data = list(stream_list)
+            elif isinstance(stream_list, dict):
+                self.request_data.append(stream_list)
         else:
-            self.requests.append(kwargs)
+            self.request_data.append(kwargs)
 
     def clear_request(self):
         """Clear all ArcLink request data."""
-        self.requests.clear()
+        self.request_data.clear()
 
     def execute(self, **kwargs):
         """Execute ArcLink request."""
@@ -264,7 +267,7 @@ class SeedLinkClient(object):
                 new_value = value
             setattr(self, key, new_value)
 
-        self.requests = {'streams': {}, 'starttime': None, 'endtime': None}
+        self.request_data = {'streams': [], 'starttime': None, 'endtime': None}
 
     def _check_required(self):
         required_parameters = ['stream_list', 'time_window', 'starttime']
@@ -280,17 +283,9 @@ class SeedLinkClient(object):
                     'Request parameter {} is required'.format(name))
 
     def _build_stream_list(self):
-        if isinstance(self.requests['streams'], dict):
-            stream_list = [self.requests['streams']]
-        elif isinstance(self.requests['streams'], (list, tuple)):
-            stream_list = self.requests['streams']
-        else:
-            raise LinkError('Stream list does not support {} type'.format(
-                type(self.requests['streams'])))
-
         streams = []
         selector_template = ':{channel}'
-        for stream in stream_list:
+        for stream in self.request_data['streams']:
             self._check_netsta(stream)
 
             network = stream.get('network')
@@ -310,8 +305,8 @@ class SeedLinkClient(object):
         return ','.join(map(str, streams))
 
     def _build_time_window(self):
-        starttime = self.requests['starttime']
-        endtime = self.requests['endtime']
+        starttime = self.request_data['starttime']
+        endtime = self.request_data['endtime']
 
         start = utils.to_pydatetime(starttime) if isinstance(
             starttime, str) else starttime
@@ -356,29 +351,35 @@ class SeedLinkClient(object):
         """
         Prepare SeedLink single station request.
         """
-        if not isinstance(self.requests['streams'], dict):
-            self.requests['streams'] = {}
+        if not self.request_data['streams']:
+            self.request_data['streams'].append({})
 
-        self.requests['starttime'] = kwargs.pop(
-            'starttime', self.requests['starttime'])
-        self.requests['endtime'] = kwargs.pop(
-            'endtime', self.requests['endtime'])
+        self.request_data['starttime'] = kwargs.pop(
+            'starttime', self.request_data['starttime'])
+        self.request_data['endtime'] = kwargs.pop(
+            'endtime', self.request_data['endtime'])
 
-        self.requests['streams'].update(kwargs)
+        self.request_data['streams'][0].update(kwargs)
 
-    def request_many(self, **kwargs):
+    def request_many(self, stream_list=None, **kwargs):
         """
         Prepare SeedLink many stations request.
         """
-        self.requests['starttime'] = kwargs.pop(
-            'starttime', self.requests['starttime'])
-        self.requests['endtime'] = kwargs.pop(
-            'endtime', self.requests['endtime'])
-        self.requests['streams'] = kwargs.pop('streams', [])
+        if stream_list:
+            if isinstance(stream_list, (list, tuple)):
+                self.request_data['streams'] = list(stream_list)
+            elif isinstance(stream_list, dict):
+                self.request_data['streams'].append(stream_list)
+        else:
+            self.request_data['starttime'] = kwargs.pop(
+                'starttime', self.request_data['starttime'])
+            self.request_data['endtime'] = kwargs.pop(
+                'endtime', self.request_data['endtime'])
+            self.request_data['streams'].append(kwargs)
 
     def clear_request(self):
         """Clear all SeedLink request data."""
-        self.requests = {'streams': {}, 'starttime': None, 'endtime': None}
+        self.request_data = {'streams': [], 'starttime': None, 'endtime': None}
 
     def execute(self, **kwargs):
         """Execute SeedLink request."""

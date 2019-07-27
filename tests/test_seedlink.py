@@ -12,7 +12,7 @@ class SeedLinkClientTest(unittest.TestCase):
         self.assertEqual(client._build_stream_list(), stream_list)
 
         client.clear_request()
-        client.request_many(streams=[
+        client.request_many([
             {'network': 'VG', 'station': 'MEPAS', 'channel': ['HHZ', 'EHZ']},
             {'network': 'VG', 'station': 'MELAB', 'channel': 'HHZ'},
             {'network': 'VG', 'station': 'MEGRA'}

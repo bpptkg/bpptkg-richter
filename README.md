@@ -198,3 +198,14 @@ and edit the data you want:
 # Update station channel to EHZ of the third request data
 client.requests[2].update(channel='EHZ')
 ```
+
+
+## Support
+
+This project is maintained by Indra Rudianto. If you have any question about
+this project, you can contact him at <indrarudianto.official@gmail.com>.
+
+
+## License
+
+Copyright (c) 2019 Balai Penyelidikan dan Pengembangan Teknologi Kebencanaan Geologi (BPPTKG)
