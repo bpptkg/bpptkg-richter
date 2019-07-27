@@ -73,7 +73,17 @@ def build_request_file(starttime, endtime, network, station, channel,
 
 
 class ArcLinkClient(object):
-    """ArcLink client wrapper."""
+    """
+    ArcLink client wrapper.
+
+    This client wrap arclink_fetch command to request time window-based data
+    over ArcLink. It supports single station or multi-stations request.
+
+    Note that arclink_fetch only run on Python 2.x. This client use default
+    Python 2.x executable at /usr/bin/python to run arclink_fetch command.
+    See arclink_fetch documentation at the following link:
+    https://www.seiscomp3.org/doc/applications/arclink_fetch.html
+    """
 
     name = 'arclink'
     default_parameters = {
@@ -216,7 +226,8 @@ class SeedLinkClient(object):
     time window-based data over SeedLink. If you intend to record realtime
     data over SeedLink, probably you want to use executable slinktool directly.
     This client only wrap minimal options of slinktool program. See slinktool
-    documentation at https://www.seiscomp3.org/doc/applications/slinktool.html.
+    documentation at the following link:
+    https://www.seiscomp3.org/doc/applications/slinktool.html
     """
 
     name = 'seedlink'
