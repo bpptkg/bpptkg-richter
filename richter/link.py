@@ -15,8 +15,8 @@ class LinkError(Exception):
     pass
 
 
-def build_request_file(starttime, endtime, station, network='VG', channel='HHZ',
-                       location='00', request_file=None):
+def build_request_file(starttime, endtime, network, station, channel,
+                       location='00', request_file=None, mode='a'):
     """
     Build ArcLink request file.
 
@@ -49,22 +49,33 @@ def build_request_file(starttime, endtime, station, network='VG', channel='HHZ',
         starttime, str) else starttime
     end = utils.to_pydatetime(endtime) if isinstance(endtime, str) else endtime
 
-    with open(path, 'w') as buf:
-        buf.write(
-            '{starttime} {endtime} {network} {station} {channel} {location}'.format(
-                starttime=start.strftime(date_format),
-                endtime=end.strftime(date_format),
-                network=network,
-                station=station,
-                channel=channel,
-                location=location
-            ))
+    if isinstance(channel, (list, tuple)):
+        channels = channel
+    elif isinstance(channel, str):
+        channels = [channel]
+    else:
+        raise LinkError(
+            'Stream channel does not support {} type'.format(type(channel)))
+
+    with open(path, mode) as buf:
+        for sta_channel in channels:
+            buf.write(
+                '{starttime} {endtime} {network} '
+                '{station} {channel} {location}\n'.format(
+                    starttime=start.strftime(date_format),
+                    endtime=end.strftime(date_format),
+                    network=network,
+                    station=station,
+                    channel=sta_channel,
+                    location=location
+                ))
     return path
 
 
 class ArcLinkClient(object):
     """ArcLink client wrapper."""
 
+    name = 'arclink'
     default_parameters = {
         'address': None,
         'request_format': 'native',
@@ -91,6 +102,7 @@ class ArcLinkClient(object):
             setattr(self, key, new_value)
         self.request_file = kwargs.pop('request_file', None)
         self.output_path = kwargs.pop('output_path', None)
+        self.requests = []
 
     def _check_required(self):
         required_parameters = ['address', 'user']
@@ -106,6 +118,31 @@ class ArcLinkClient(object):
                 'Default Python executable is in /usr/bin/python.'
             )
 
+    def _check_request_parameters(self, item):
+        required_request_parameters = [
+            'starttime', 'endtime', 'network', 'station', 'channel']
+        for name in required_request_parameters:
+            if item.get(name) is None:
+                raise LinkError(
+                    'Request parameter {} is required'.format(name))
+
+    def _build_request_file(self):
+        if os.path.exists(self.request_file):
+            os.unlink(self.request_file)
+
+        for request in self.requests:
+            self._check_request_parameters(request)
+
+            build_request_file(
+                request['starttime'],
+                request['endtime'],
+                request['network'],
+                request['station'],
+                request['channel'],
+                location=request.get('location', '00'),
+                request_file=self.request_file,
+                mode='a')
+
     def _build_cli(self):
         arclink_cmd = utils.find_executable(self.arclink_cli)
         if arclink_cmd is None:
@@ -113,13 +150,19 @@ class ArcLinkClient(object):
         return [self.python_cmd, arclink_cmd]
 
     def _build_cli_arguments(self):
-        if not self.request_file:
-            raise LinkError('Request file is not built yet')
+        if self.output_path is None:
+            self.output_path = tempfile.gettempdir()
+        if self.request_file is None:
+            self.request_file = utils.generate_safe_random_filename()
+        output_file = utils.generate_safe_random_filename(
+            self.data_format)
+        if self.output_file is None:
+            self.output_file = os.path.join(self.output_path, output_file)
 
         args = []
         underscore = '_'
         dash = '-'
-        for name in self.accepts_parameters:
+        for name in self.default_parameters:
             value = getattr(self, name)
             if value:
                 if isinstance(value, bool):
@@ -134,27 +177,33 @@ class ArcLinkClient(object):
     def _build_cli_with_arguments(self):
         return self._build_cli() + self._build_cli_arguments()
 
-    def request(self, *args, **kwargs):
+    def request(self, **kwargs):
         """
-        Prepare ArcLink request.
-
-        It builds the request file and generate random output file it if not
-        explicitly set by user. Positional arguments required are starttime,
-        endtime, and station name.
+        Prepare ArcLink single station request.
         """
-        self.request_file = build_request_file(*args, **kwargs)
-        output_file = utils.generate_safe_random_filename(
-            self.data_format)
+        if not self.requests:
+            self.requests.append({})
+        self.requests[0].update(kwargs)
 
-        if self.output_path is None:
-            self.output_path = tempfile.gettempdir()
-        self.output_file = os.path.join(self.output_path, output_file)
+    def request_many(self, **kwargs):
+        """
+        Prepare ArcLink many station request.
+        """
+        if kwargs.get('streams'):
+            self.requests = kwargs['streams']
+        else:
+            self.requests.append(kwargs)
+
+    def clear_request(self):
+        """Clear all ArcLink request data."""
+        self.requests.clear()
 
     def execute(self, **kwargs):
         """Execute ArcLink request."""
         self._check_required()
-
         cli_with_args = self._build_cli_with_arguments()
+
+        self._build_request_file()
         completed_process = subprocess.run(cli_with_args, **kwargs)
         return completed_process
 
@@ -167,9 +216,10 @@ class SeedLinkClient(object):
     time window-based data over SeedLink. If you intend to record realtime
     data over SeedLink, probably you want to use executable slinktool directly.
     This client only wrap minimal options of slinktool program. See slinktool
-    program at https://www.seiscomp3.org/doc/applications/slinktool.html.
+    documentation at https://www.seiscomp3.org/doc/applications/slinktool.html.
     """
 
+    name = 'seedlink'
     default_parameters = {
         'address': None,
         'delay': 30,
