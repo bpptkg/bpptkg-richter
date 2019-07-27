@@ -36,7 +36,7 @@ def build_request_file(starttime, endtime, station, network='VG', channel='HHZ',
 
     Note that starttime and endtime for request are in UTC timezone. For more
     information, see the following ArcLink CLI client documentation at
-    https://www.seiscomp3.org/doc/jakarta/current/apps/arclink_fetch.html
+    https://www.seiscomp3.org/doc/jakarta/current/apps/arclink_fetch.html.
     """
     date_format = '%Y,%m,%d,%H,%M,%S'
     if not request_file:
@@ -65,7 +65,7 @@ def build_request_file(starttime, endtime, station, network='VG', channel='HHZ',
 class ArcLinkClient(object):
     """ArcLink client wrapper."""
 
-    accepts_parameters = {
+    default_parameters = {
         'address': None,
         'request_format': 'native',
         'data_format': 'mseed',
@@ -79,12 +79,11 @@ class ArcLinkClient(object):
         'user': None,
         'output_file': None
     }
-    required_parameters = ['address', 'user']
     arclink_cli = 'arclink_fetch'
     python_cmd = '/usr/bin/python'
 
     def __init__(self, **kwargs):
-        for key, value in self.accepts_parameters.items():
+        for key, value in self.default_parameters.items():
             if key in kwargs:
                 new_value = kwargs[key]
             else:
@@ -94,7 +93,8 @@ class ArcLinkClient(object):
         self.output_path = kwargs.pop('output_path', None)
 
     def _check_required(self):
-        for name in self.required_parameters:
+        required_parameters = ['address', 'user']
+        for name in required_parameters:
             if not getattr(self, name):
                 raise LinkError('Parameter {} is required'.format(name))
 
@@ -131,7 +131,7 @@ class ArcLinkClient(object):
                     name=name.replace(underscore, dash), value=value))
         return args + [self.request_file]
 
-    def _build_cli_with_args(self):
+    def _build_cli_with_arguments(self):
         return self._build_cli() + self._build_cli_arguments()
 
     def request(self, *args, **kwargs):
@@ -154,11 +154,168 @@ class ArcLinkClient(object):
         """Execute ArcLink request."""
         self._check_required()
 
-        cli_with_args = self._build_cli_with_args()
+        cli_with_args = self._build_cli_with_arguments()
         completed_process = subprocess.run(cli_with_args, **kwargs)
         return completed_process
 
 
 class SeedLinkClient(object):
-    """SeedLink client wrapper."""
-    pass
+    """
+    SeedLink client wrapper.
+
+    This client is not intended to record data by realtime, but to request
+    time window-based data over SeedLink. If you intend to record realtime
+    data over SeedLink, probably you want to use executable slinktool directly.
+    This client only wrap minimal options of slinktool program. See slinktool
+    program at https://www.seiscomp3.org/doc/applications/slinktool.html.
+    """
+
+    default_parameters = {
+        'address': None,
+        'delay': 30,
+        'timeout': 60,
+        'data_format': 'mseed',
+        'stream_list': None,
+        'time_window': None,
+        'output_file': None,
+        'output_path': None,
+    }
+    request_parameters = (
+        'network',
+        'station',
+        'channel',
+        'starttime',
+        'endtime',
+    )
+    seedlink_cli = 'slinktool'
+
+    def __init__(self, **kwargs):
+        for key, value in self.default_parameters.items():
+            if key in kwargs:
+                new_value = kwargs[value]
+            else:
+                new_value = value
+            setattr(self, key, new_value)
+
+        self.requests = {'streams': {}, 'starttime': None, 'endtime': None}
+
+    def _check_required(self):
+        required_parameters = ['stream_list', 'time_window', 'starttime']
+        for name in required_parameters:
+            if not getattr(self, name):
+                raise LinkError('Parameter {} is reqired'.format(name))
+
+    def _check_netsta(self, item):
+        required_request_parameters = ['network', 'station']
+        for name in required_request_parameters:
+            if item[name] is None:
+                raise LinkError(
+                    'Request parameter {} is required'.format(name))
+
+    def _build_stream_list(self):
+        if isinstance(self.requests['streams'], dict):
+            stream_list = [self.requests['streams']]
+        elif isinstance(self.requests['streams'], (list, tuple)):
+            stream_list = self.requests['streams']
+        else:
+            raise LinkError('Stream list does not support {} type'.format(
+                type(self.requests['streams'])))
+
+        streams = []
+        selector_template = ':{channel}'
+        for stream in stream_list:
+            self._check_netsta(stream)
+
+            network = stream.get('network')
+            station = stream.get('station')
+            channel = stream.get('channel')
+            netsta = '{network}_{station}'.format(
+                network=network, station=station)
+
+            if isinstance(channel, (list, tuple)):
+                selector = selector_template.format(
+                    channel=' '.join(map(str, channel)))
+            elif isinstance(channel, str):
+                selector = selector_template.format(channel=channel)
+            else:
+                selector = ''
+            streams.append(netsta + selector)
+        return ','.join(map(str, streams))
+
+    def _build_time_window(self):
+        starttime = self.requests['starttime']
+        endtime = self.requests['endtime']
+
+        start = utils.to_pydatetime(starttime) if isinstance(
+            starttime, str) else starttime
+        end = utils.to_pydatetime(endtime) if isinstance(
+            endtime, str) else endtime
+
+        date_format = '%Y,%m,%d,%H,%M,%S'
+        time_window = '{starttime}:{endtime}'.format(
+            starttime=start.strftime(date_format),
+            endtime=end.strftime(date_format) if end else ''
+        )
+        return time_window
+
+    def _build_cli(self):
+        seedlink_cmd = utils.find_executable(self.seedlink_cli)
+        if seedlink_cmd is None:
+            raise LinkError('Could not find slinktool executable')
+        return [seedlink_cmd]
+
+    def _build_cli_arguments(self):
+        if self.time_window is None:
+            self.time_window = self._build_time_window()
+        if self.stream_list is None:
+            self.stream_list = self._build_stream_list()
+        if self.output_path is None:
+            self.output_path = tempfile.gettempdir()
+        if self.output_file is None:
+            output_file = utils.generate_safe_random_filename(self.data_format)
+            self.output_file = os.path.join(self.output_path, output_file)
+        return [
+            '-nd', self.delay,
+            '-nt', self.timeout,
+            '-tw', self.time_window,
+            '-S', self.stream_list,
+            '-o', self.output_file,
+        ]
+
+    def _build_cli_with_arguments(self):
+        return self._build_cli() + self._build_cli_arguments()
+
+    def request(self, **kwargs):
+        """
+        Prepare SeedLink single station request.
+        """
+        if not isinstance(self.requests['streams'], dict):
+            self.requests['streams'] = {}
+
+        self.requests['starttime'] = kwargs.pop(
+            'starttime', self.requests['starttime'])
+        self.requests['endtime'] = kwargs.pop(
+            'endtime', self.requests['endtime'])
+
+        self.requests['streams'].update(kwargs)
+
+    def request_many(self, **kwargs):
+        """
+        Prepare SeedLink many stations request.
+        """
+        self.requests['starttime'] = kwargs.pop(
+            'starttime', self.requests['starttime'])
+        self.requests['endtime'] = kwargs.pop(
+            'endtime', self.requests['endtime'])
+        self.requests['streams'] = kwargs.pop('streams', [])
+
+    def clear_request(self):
+        """Clear all SeedLink request data."""
+        self.requests = {'streams': {}, 'starttime': None, 'endtime': None}
+
+    def execute(self, **kwargs):
+        """Execute SeedLink request."""
+        cli_with_args = self._build_cli_with_arguments()
+        self._check_required()
+        completed_process = subprocess.run(cli_with_args, **kwargs)
+        return completed_process
