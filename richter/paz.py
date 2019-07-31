@@ -2,6 +2,8 @@
 List poles and zeros constants of BPPTKG seismic stations.
 """
 
+import copy
+
 # List poles and zeros of BPPTKG seismic stations. Some stations may not be
 # available, but we hope to add it in the future version.
 #
@@ -34,7 +36,9 @@ PAZ = {
     # See BPPTKG dataless projects (https://gitlab.com/bpptkg/dataless)
     # Note that the sensitivity is given by 2 times (single-ended sensitivity).
     'MEPAS': {
-        'sensitivity': 994035785.2882704,
+        'sensitivity': {
+            'Z': 994035785.2882704
+        },
         'gain': 571507691.7712862,
         'zeros': [0j, 0j],
         'poles': [
@@ -46,7 +50,9 @@ PAZ = {
         ],
     },
     'MELAB': {
-        'sensitivity': 989119683.4817014,
+        'sensitivity': {
+            'Z': 989119683.4817014
+        },
         'gain': 571507691.7712862,
         'zeros': [0j, 0j],
         'poles': [
@@ -61,7 +67,9 @@ PAZ = {
     # and zeros values from PDCC NRL tool.
     # See BPPTKG dataless projects (https://gitlab.com/bpptkg/dataless)
     'MEDEL': {
-        'sensitivity': 134645742.0,
+        'sensitivity': {
+            'Z': 134645742.0
+        },
         'gain': 1,
         'zeros': [0j, 0j],
         'poles': [
@@ -70,7 +78,9 @@ PAZ = {
         ],
     },
     'MEPUS': {
-        'sensitivity': 134645742.0,
+        'sensitivity': {
+            'Z': 134645742.0
+        },
         'gain': 1,
         'zeros': [0j, 0j],
         'poles': [
@@ -81,7 +91,9 @@ PAZ = {
     # For station MEGRA, we obtained poles and zeros from PDCC NRL tool.
     # Note that the sensitivity is given by 2 times (single-ended sensitivity).
     'MEGRA': {
-        'sensitivity': 989119683.4817014,
+        'sensitivity': {
+            'Z': 989119683.4817014
+        },
         'gain': 571507691.7712862,
         'zeros': [0j, 0j],
         'poles': [
@@ -93,3 +105,26 @@ PAZ = {
         ],
     }
 }
+
+
+def get_paz(station, component=None):
+    """Get PAZ response for certain station and component."""
+    if station not in PAZ:
+        raise NameError('Unknown station name {}'.format(station))
+
+    if component:
+        supported_channels = {'E', 'N', 'Z', 'e', 'n', 'z'}
+        if component not in supported_channels:
+            raise NameError('Unknown component name {}'.format(component))
+
+        sensitivity = PAZ[station]['sensitivity'].get(component.upper())
+        if sensitivity is None:
+            raise Exception('Unsupported component {component} '
+                            'on station {station}'.format(
+                                component=component, station=station))
+
+        paz = copy.deepcopy(PAZ)
+        paz[station]['sensitivity'] = sensitivity
+        return paz[station]
+    else:
+        return PAZ[station]

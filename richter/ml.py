@@ -39,7 +39,7 @@ def compute_wa(stream, station, network='VG', component='Z', **kwargs):
                                     component=component, **kwargs)
     if not filtered_stream:
         return None
-    filtered_stream.simulate(paz_remove=paz.PAZ[station],
+    filtered_stream.simulate(paz_remove=paz.get_paz(station, component),
                              paz_simulate=paz.PAZ['WOOD_ANDERSON'],
                              water_level=0.0)
     wa_ampl = np.max(np.abs(stream[0].data))
