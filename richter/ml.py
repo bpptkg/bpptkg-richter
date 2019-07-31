@@ -18,7 +18,7 @@ __all__ = [
 def filter_stream(stream, **kwargs):
     """Filter ObsPy stream object."""
     filtered_stream = stream.select(**kwargs)
-    if filtered_stream.count > 1:
+    if filtered_stream.count() > 1:
         filtered_stream.merge(method=1)
     return filtered_stream
 

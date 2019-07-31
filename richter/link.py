@@ -169,7 +169,9 @@ class ArcLinkClient(object):
         if self.output_path is None:
             self.output_path = tempfile.gettempdir()
         if self.request_file is None:
-            self.request_file = utils.generate_safe_random_filename()
+            self.request_file = os.path.join(
+                self.output_path,
+                utils.generate_safe_random_filename())
         output_file = utils.generate_safe_random_filename(
             self.data_format)
         if self.output_file is None:
