@@ -66,7 +66,7 @@ client.request(
 )
 
 # See all request data
-print(client.requests)
+print(client.request_data)
 
 # Start request to ArcLink server
 client.execute()
@@ -108,16 +108,16 @@ client.request(
     station='MEPAS',
     channel=['HHZ', 'EHZ', 'NHZ']
 )
-print(client.requests)
+print(client.request_data)
 
 # Update station from MEPAS to MELAB
 client.request(station='MELAB')
-print(client.requests)
+print(client.request_data)
 ```
 
 If you want to make a bulk request (useful to fetch multi-station data),
 you can use `request_many` method and provide a list of dictionary of
-request data with argument `streams`:
+request data:
 
 ```python
 from richter import ArcLinkClient
@@ -128,7 +128,7 @@ client = ArcLinkClient(
     data_format='mseed'
 )
 
-client.request_many(streams=[
+client.request_many([
     {
         'starttime': '2019-07-25 00:00:00',
         'endtime': '2019-07-25 01:00:00',
@@ -153,7 +153,7 @@ client.request_many(streams=[
 ])
 
 # See all request data
-print(client.requests)
+print(client.request_data)
 
 # Start request to ArcLink server
 client.execute()
@@ -196,9 +196,12 @@ and edit the data you want:
 
 ```python
 # Update station channel to EHZ of the third request data
-client.requests[2].update(channel='EHZ')
+client.request_data[2].update(channel='EHZ')
 ```
 
+## SeedLink Client
+
+TODO
 
 ## Support
 
