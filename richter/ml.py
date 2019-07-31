@@ -17,7 +17,7 @@ __all__ = [
 
 def filter_stream(stream, **kwargs):
     """Filter ObsPy stream object."""
-    filtered_stream = stream.select(**kwargs)
+    filtered_stream = stream.copy().select(**kwargs)
     if filtered_stream.count() > 1:
         filtered_stream.merge(method=1)
     return filtered_stream
@@ -42,7 +42,7 @@ def compute_wa(stream, station, network='VG', component='Z', **kwargs):
     filtered_stream.simulate(paz_remove=paz.get_paz(station, component),
                              paz_simulate=paz.PAZ['WOOD_ANDERSON'],
                              water_level=0.0)
-    wa_ampl = np.max(np.abs(stream[0].data))
+    wa_ampl = np.max(np.abs(filtered_stream[0].data))
     return wa_ampl
 
 
@@ -63,5 +63,6 @@ def compute_app(stream, station, network='VG', component='Z', **kwargs):
                                     component=component, **kwargs)
     if not filtered_stream:
         return None
-    app = np.abs(np.min(stream[0].data)) + np.abs(np.max(stream[0].data))
+    app = np.abs(np.min(filtered_stream[0].data)) + \
+        np.abs(np.max(filtered_stream[0].data))
     return app
