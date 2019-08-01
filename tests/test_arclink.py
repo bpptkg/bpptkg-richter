@@ -1,5 +1,6 @@
+import os
 import unittest
-from richter.link import ArcLinkClient
+from richter.link import ArcLinkClient, stream_manager
 from richter.utils import find_executable
 
 
@@ -78,6 +79,19 @@ class ArcLinkTest(unittest.TestCase):
         with open('/tmp/req.txt', 'r') as buf:
             content = buf.read()
         self.assertEqual(content, stream_list)
+
+
+class StreamManagerTest(unittest.TestCase):
+
+    def test_stream_manager(self):
+        with stream_manager(starttime='2019-01-01 00:00:00',
+                            endtime='2019-01-01 01:00:00',
+                            network='VG',
+                            station='MEPAS',
+                            channel='HHZ') as stream_file:
+            self.assertIsNotNone(stream_file)
+
+        self.assertFalse(os.path.exists(stream_file))
 
 
 if __name__ == '__main__':

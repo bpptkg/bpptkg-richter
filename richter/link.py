@@ -6,6 +6,7 @@ import os
 import sys
 import tempfile
 import subprocess
+from contextlib import contextmanager
 
 from . import utils
 
@@ -13,6 +14,7 @@ __all__ = [
     'build_request_file',
     'ArcLinkClient',
     'SeedLinkClient',
+    'stream_manager',
 ]
 
 
@@ -252,13 +254,6 @@ class SeedLinkClient(object):
         'output_file': None,
         'output_path': None,
     }
-    request_parameters = (
-        'network',
-        'station',
-        'channel',
-        'starttime',
-        'endtime',
-    )
     seedlink_cli = 'slinktool'
 
     def __init__(self, **kwargs):
@@ -389,3 +384,27 @@ class SeedLinkClient(object):
         self._check_required()
         completed_process = subprocess.run(cli_with_args, **kwargs)
         return completed_process
+
+
+@contextmanager
+def stream_manager(**kwargs):
+    """
+    Context manager of ArcLinkClient class.
+
+    It yields stream file path if request succeed, and remove request file
+    and stream file on exit. ArcLink address default to 192.168.0.25:180001,
+    and data format is mseed. All other options left to default values.
+    """
+    client = ArcLinkClient(address='192.168.0.25:18001',
+                           user='user',
+                           data_format='mseed')
+    client.request_many(**kwargs)
+
+    try:
+        client.execute()
+        yield client.output_file
+    finally:
+        if os.path.exists(client.output_file):
+            os.unlink(client.output_file)
+        if os.path.exists(client.request_file):
+            os.unlink(client.request_file)
