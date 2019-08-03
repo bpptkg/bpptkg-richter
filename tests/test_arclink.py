@@ -84,7 +84,8 @@ class ArcLinkTest(unittest.TestCase):
 class StreamManagerTest(unittest.TestCase):
 
     def test_stream_manager(self):
-        with stream_manager(starttime='2019-01-01 00:00:00',
+        with stream_manager(address='192.168.0.25:18001',
+                            starttime='2019-01-01 00:00:00',
                             endtime='2019-01-01 01:00:00',
                             network='VG',
                             station='MEPAS',

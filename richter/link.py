@@ -392,10 +392,13 @@ def stream_manager(**kwargs):
     Context manager of ArcLinkClient class.
 
     It yields stream file path if request succeed, and remove request file
-    and stream file on exit. ArcLink address default to 192.168.0.25:180001,
-    and data format is mseed. All other options left to default values.
+    and stream file on exit.
     """
-    client = ArcLinkClient(address='192.168.0.25:18001',
+    address = kwargs.pop('address', None)
+    if address is None:
+        raise LinkError('Parameter address is required')
+
+    client = ArcLinkClient(address=address,
                            user='user',
                            data_format='mseed')
     client.request_many(**kwargs)
