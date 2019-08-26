@@ -11,7 +11,7 @@ def read(filename):
 
 
 setup(
-    name='richter',
+    name='bpptkg-richter',
     version='0.1.0',
     description=('Python library for computing Richter local magnitude scales '
                  'on BPPTKG seismic network'),

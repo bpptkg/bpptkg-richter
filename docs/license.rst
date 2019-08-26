@@ -1,0 +1,6 @@
+=======
+License
+=======
+
+Copyright (c) 2019 Balai Penyelidikan dan Pengembangan Teknologi Kebencanaan
+Geologi (BPPTKG)

@@ -3,3 +3,9 @@ __pycache__
 build/
 dist/
 test_settings.py
+.vscode
+TODO
+_build
+_static
+_templates
+*.egg-info
