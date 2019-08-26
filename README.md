@@ -79,4 +79,7 @@ this project, you can contact him at <indrarudianto.official@gmail.com>.
 
 ## License
 
-Copyright (c) 2019 Balai Penyelidikan dan Pengembangan Teknologi Kebencanaan Geologi (BPPTKG)
+By contributing to the project, you agree that your contributions will be
+licensed under its MIT license. See
+[LICENSE](https://gitlab.com/bpptkg/bpptkg-richter/blob/master/LICENSE) for
+details.
