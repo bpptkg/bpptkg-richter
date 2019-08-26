@@ -28,19 +28,19 @@ def build_request_file(starttime, endtime, network, station, channel,
     """
     Build ArcLink request file.
 
-    The request file format has the following format:
+    The request file format has the following format: ::
 
-    YYYY,MM,DD,HH,MM,SS YYYY,MM,DD,HH,MM,SS Network Station Channel [Location]
+        YYYY,MM,DD,HH,MM,SS YYYY,MM,DD,HH,MM,SS Network Station Channel [Location]
 
     the Channel, Station and Location, can contains wildcards (*) and the
     Location field is optional although we explicitly define it in the request
     file. For matching all locations you can use the '*' symbol, if empty it
     assumes that only empty locations are being requested.
 
-    Example:
+    Example: ::
 
-    2010,02,18,12,00,00 2010,02,18,12,10,00 GE WLF BH*
-    2010,02,18,12,00,00 2010,02,18,12,10,00 GE VSU BH* 00
+        2010,02,18,12,00,00 2010,02,18,12,10,00 GE WLF BH*
+        2010,02,18,12,00,00 2010,02,18,12,10,00 GE VSU BH* 00
 
     Note that starttime and endtime for request are in UTC timezone. For more
     information, see the following ArcLink CLI client documentation at
