@@ -20,6 +20,7 @@ setup(
     license='BPPTKG',
     install_requires=[
         'numpy',
+        'python-dateutil',
     ],
     author='Indra Rudianto',
     author_email='indrarudianto.official@gmail.com',
