@@ -17,7 +17,7 @@ setup(
                  'on BPPTKG seismic network'),
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
-    license='BPPTKG',
+    license='MIT',
     install_requires=[
         'numpy',
         'python-dateutil',
