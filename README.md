@@ -1,11 +1,13 @@
 # bpptkg-richter
 
-Python library for computing Richter local magnitude scales on BPPTKG seismic network.
+Python library for computing Richter local magnitude scales on BPPTKG seismic
+network.
 
 ## Requirements
 
 * Python 3.5+
 * numpy
+* python-dateutil
 
 ## Installation
 
@@ -40,7 +42,7 @@ wa_ampl = richter.compute_wa(stream, 'MEPAS', network='VG', component='Z')
 app = richter.compute_app(stream, 'MEPAS', network='VG', component='Z')
 ```
 
-or for short version:
+or for short:
 
 ```python
 from obspy import read
@@ -54,13 +56,13 @@ app = richter.compute_app(stream, 'MEPAS')
 ```
 
 For current version, on computing local magnitude (`compute_ml`) and
-Wood-Anderson amplitude(`compute_wa`), supported component is only `Z`
+Wood-Anderson amplitude(`compute_wa`), the only supported component is `Z`
 component.
 
-Method `compute_app` support other components, for example:
+`compute_app` support other components, for example:
 
 ```python
-app = richter.compute_app(stream, 'MELAB', component='E') 
+app = richter.compute_app(stream, 'MELAB', component='E')
 ```
 
 ## Documentation
