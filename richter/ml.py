@@ -16,7 +16,12 @@ __all__ = [
 
 
 def filter_stream(stream, **kwargs):
-    """Filter ObsPy stream object."""
+    """
+    Filter ObsPy stream object.
+    
+    :param stream: ObsPy waveform stream object.
+    :type stream: :class:`obspy.core.stream.Stream`
+    """
     filtered_stream = stream.copy().select(**kwargs)
     if filtered_stream.count() > 1:
         filtered_stream.merge(method=1)
@@ -29,12 +34,30 @@ def compute_bpptkg_ml(wa_ampl):
 
     Note that Wood Anderson zero to peak amplitude (wa_ampl) is in mm.
     Calibration function log10(A0) for BPPTKG seismic network is 1.4.
+
+    :param wa_ampl: Wood-Anderson zero to peak amplitude in mili-meter.
+    :type wa_ampl: float
+    :return: BPPTKG Richter magnitude scale.
+    :rtype: float
     """
     return np.log10(wa_ampl) + 1.4
 
 
 def compute_wa(stream, station, network='VG', component='Z', **kwargs):
-    """Compute stream Wood-Anderson amplitude in meter."""
+    """
+    Compute stream Wood-Anderson amplitude in meter.
+    
+    :param stream: ObsPy waveform stream object.
+    :type stream: :class:`obspy.core.stream.Stream`
+    :param station: Seismic station name, e.g. MEPAS, MEGRA, etc.
+    :type station: str
+    :param network: Seismic network name, default to VG.
+    :type network: str
+    :param component: Seismic station component, e.g E, N, Z, default to Z.
+    :type component: str
+    :return: Wood-Anderson zero to peak amplitude in meter.
+    :rtype: float
+    """
     filtered_stream = filter_stream(stream, station=station, network=network,
                                     component=component, **kwargs)
     if not filtered_stream:
@@ -47,7 +70,20 @@ def compute_wa(stream, station, network='VG', component='Z', **kwargs):
 
 
 def compute_ml(stream, station, network='VG', component='Z', **kwargs):
-    """Compute Richter magnitude scales."""
+    """
+    Compute Richter magnitude scales.
+    
+    :param stream: ObsPy waveform stream object.
+    :type stream: :class:`obspy.core.stream.Stream`
+    :param station: Seismic station name, e.g. MEPAS, MEGRA, etc.
+    :type station: str
+    :param network: Seismic network name, default to VG.
+    :type network: str
+    :param component: Seismic station component, e.g E, N, Z, default to Z.
+    :type component: str
+    :return: BPPTKG Richter magnitude scale.
+    :rtype: float
+    """
     wa_ampl = compute_wa(stream, station, network=network,
                          component=component, **kwargs)
     if not wa_ampl:
@@ -58,7 +94,20 @@ def compute_ml(stream, station, network='VG', component='Z', **kwargs):
 
 
 def compute_app(stream, station, network='VG', component='Z', **kwargs):
-    """Compute stream amplitude peak to peak."""
+    """
+    Compute stream amplitude peak to peak.
+    
+    :param stream: ObsPy waveform stream object.
+    :type stream: :class:`obspy.core.stream.Stream`
+    :param station: Seismic station name, e.g. MEPAS, MEGRA, etc.
+    :type station: str
+    :param network: Seismic network name, default to VG.
+    :type network: str
+    :param component: Seismic station component, e.g E, N, Z, default to Z.
+    :type component: str
+    :return: Stream amplitude peak to peak.
+    :rtype: int
+    """
     filtered_stream = filter_stream(stream, station=station, network=network,
                                     component=component, **kwargs)
     if not filtered_stream:
