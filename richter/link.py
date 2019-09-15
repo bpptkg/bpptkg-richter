@@ -227,7 +227,10 @@ class ArcLinkClient(object):
         cli_with_args = self._build_cli_with_arguments()
 
         self._build_request_file()
-        completed_process = subprocess.run(cli_with_args, **kwargs)
+        if sys.version_info < (3, 5):
+            completed_process = subprocess.call(cli_with_args, **kwargs)
+        else:
+            completed_process = subprocess.run(cli_with_args, **kwargs)
         return completed_process
 
 
@@ -382,7 +385,10 @@ class SeedLinkClient(object):
         """Execute SeedLink request."""
         cli_with_args = self._build_cli_with_arguments()
         self._check_required()
-        completed_process = subprocess.run(cli_with_args, **kwargs)
+        if sys.version_info < (3, 5):
+            completed_process = subprocess.call(cli_with_args, **kwargs)
+        else:
+            completed_process = subprocess.run(cli_with_args, **kwargs)
         return completed_process
 
 
