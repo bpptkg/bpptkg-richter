@@ -316,11 +316,34 @@ and edit the data you want:
     # Update station channel to EHZ of the third request data
     client.request_data['streams'][2].update(channel='EHZ')
 
+Stream Manager
+--------------
+
+Stream manager allows you to make a one way request using Python context
+manager. It yields a stream file path if request succeed, and remove request
+file and stream file on exit. For example:
+
+.. code-block:: python
+
+    from obspy import read
+    from richter import stream_manager
+
+    with stream_manager(address='192.168.0.25:18001',
+                        starttime='2019-01-01 00:00:00',
+                        endtime='2019-01-01 01:00:00',
+                        network='VG',
+                        station='MEPAS',
+                        channel='HHZ') as stream_file:
+        stream = read(stream_file)
+        # Then, do something with stream.
+
+Request to the server is default to using ArcLink client.
+
 Richter Magnitude Scales
 ------------------------
 
 This package also provides a method for computing Richter local magnitude scales
-on BPPTKG seismic network (`VG`). Currently supported stations are ``MEDEL``,
+on BPPTKG seismic network (``VG``). Currently supported stations are ``MEDEL``,
 ``MELAB``, ``MEPAS``, ``MEPUS`` and only support ``Z`` component.
 
 You may want to install `ObsPy`_ package, because this package only work on
@@ -342,7 +365,7 @@ ObsPy stream type. Default network is ``VG`` and default component is ``Z``:
     # Compute count amplitude peak-to-peak for station MEPAS
     app = richter.compute_app(stream, 'MEPAS', network='VG', component='Z')
 
-or for short version:
+or for short:
 
 .. code-block:: python
 
@@ -359,7 +382,7 @@ For current version, on computing local magnitude (``compute_ml``) and
 Wood-Anderson amplitude(``compute_wa``), supported component is only ``Z``
 component.
 
-Method ``compute_app`` support other components, for example:
+``compute_app`` support other components, for example:
 
 .. code-block:: python
 
