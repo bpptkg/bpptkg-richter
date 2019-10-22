@@ -81,19 +81,5 @@ class ArcLinkTest(unittest.TestCase):
         self.assertEqual(content, stream_list)
 
 
-class StreamManagerTest(unittest.TestCase):
-
-    def test_stream_manager(self):
-        with stream_manager(address='192.168.0.25:18001',
-                            starttime='2019-01-01 00:00:00',
-                            endtime='2019-01-01 01:00:00',
-                            network='VG',
-                            station='MEPAS',
-                            channel='HHZ') as stream_file:
-            self.assertIsNotNone(stream_file)
-
-        self.assertFalse(os.path.exists(stream_file))
-
-
 if __name__ == '__main__':
     unittest.main()
