@@ -12,7 +12,7 @@ binaries and Python libaries to ``PATH`` and ``PYTHONPATH``.
 .. code-block:: bash
 
         export PATH=$PATH:/path/to/seiscomp3/bin:/path/to/seiscomp3/sbin
-        export PYTHONPATH=$PYTHONPATH:/path/to/seiscomp3/lib/python
+        export PYTHONPATH=$PYTHONPATH:/path/to/seiscomp3/lib:/path/to/seiscomp3/lib/python:/path/to/seiscomp3/lib/python/seiscomp3
 
 2. Update user system environment variables:
 
