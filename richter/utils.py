@@ -19,7 +19,7 @@ def generate_safe_random_filename(extension='txt'):
 
 def to_pydatetime(*args, **kwargs):
     """
-    Convert date string to Python non-aware datetime.
+    Convert date string to Python datetime.
     """
     date_obj = parser.parse(*args, **kwargs)
     return date_obj
