@@ -1,7 +1,6 @@
 import os
 import unittest
 from richter.link import ArcLinkClient, stream_manager
-from richter.utils import find_executable
 
 
 class ArcLinkTest(unittest.TestCase):

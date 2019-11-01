@@ -270,15 +270,21 @@ class SeedLinkClient(object):
         self.request_data = {'streams': [], 'starttime': None, 'endtime': None}
 
     def _check_required(self):
-        required_parameters = ['stream_list', 'time_window', 'starttime']
+        required_parameters = ['stream_list', 'time_window']
         for name in required_parameters:
             if not getattr(self, name):
-                raise LinkError('Parameter {} is reqired'.format(name))
+                raise LinkError('Parameter {} is required'.format(name))
+
+    def _check_request_parameters(self):
+        if self.request_data['starttime'] is None:
+            raise LinkError('Parameter starttime is required')
+        if self.request_data['endtime'] is None:
+            raise LinkError('Parameter endtime is required')
 
     def _check_netsta(self, item):
         required_request_parameters = ['network', 'station']
         for name in required_request_parameters:
-            if item[name] is None:
+            if not item.get(name):
                 raise LinkError(
                     'Request parameter {} is required'.format(name))
 
@@ -383,8 +389,10 @@ class SeedLinkClient(object):
 
     def execute(self, **kwargs):
         """Execute SeedLink request."""
+        self._check_request_parameters()
         cli_with_args = self._build_cli_with_arguments()
         self._check_required()
+
         if sys.version_info < (3, 5):
             completed_process = subprocess.call(cli_with_args, **kwargs)
         else:

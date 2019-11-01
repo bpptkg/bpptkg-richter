@@ -1,6 +1,5 @@
 import unittest
-from richter.link import SeedLinkClient
-from richter.utils import find_executable
+from richter.link import SeedLinkClient, LinkError
 
 
 class SeedLinkClientTest(unittest.TestCase):
@@ -60,6 +59,70 @@ class SeedLinkClientTest(unittest.TestCase):
         )
         self.assertEqual(client.address, '192.168.0.25:18000')
         self.assertEqual(client.data_format, 'mseed')
+
+    def test__check_required(self):
+        client = SeedLinkClient(address='192.168.0.25:18000',
+                                data_format='mseed')
+
+        with self.assertRaises(LinkError):
+            client.clear_request()
+            client.request()
+            client._check_request_parameters()
+            client._build_cli_with_arguments()
+            client._check_required()
+
+        with self.assertRaises(LinkError):
+            client.clear_request()
+            client.request(
+                starttime='2019-01-01 12:00:00',
+                endtime='2019-01-01 12:01:00'
+            )
+            client._check_request_parameters()
+            client._build_cli_with_arguments()
+            client._check_required()
+
+        with self.assertRaises(LinkError):
+            client.clear_request()
+            client.request(
+                starttime='2019-01-01 12:00:00',
+                endtime='2019-01-01 12:01:00',
+                network='VG',
+            )
+            client._check_request_parameters()
+            client._build_cli_with_arguments()
+            client._check_required()
+
+    def test__check_required_request_many(self):
+        client = SeedLinkClient(address='192.168.0.25:18000',
+                                data_format='mseed')
+
+        with self.assertRaises(LinkError):
+            client.clear_request()
+            client.request_many()
+            client._check_request_parameters()
+            client._build_cli_with_arguments()
+            client._check_required()
+
+        with self.assertRaises(LinkError):
+            client.clear_request()
+            client.request_many(
+                starttime='2019-01-01 12:00:00',
+                endtime='2019-01-01 12:01:00'
+            )
+            client._check_request_parameters()
+            client._build_cli_with_arguments()
+            client._check_required()
+
+        with self.assertRaises(LinkError):
+            client.clear_request()
+            client.request_many(
+                starttime='2019-01-01 12:00:00',
+                endtime='2019-01-01 12:01:00',
+                network='VG',
+            )
+            client._check_request_parameters()
+            client._build_cli_with_arguments()
+            client._check_required()
 
 
 if __name__ == '__main__':
