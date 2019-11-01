@@ -7,5 +7,6 @@ Requirements
 * Python>=3.5
 * numpy>=1.16.0
 * sphinx_rtd_theme>=0.4.3
+* python-dateutil
 
 You can also see dependency packages in ``requirements.txt`` file.
