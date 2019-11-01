@@ -54,9 +54,19 @@ def build_request_file(starttime, endtime, network, station, channel,
     else:
         path = request_file
 
-    start = utils.to_pydatetime(starttime) if isinstance(
-        starttime, str) else starttime
-    end = utils.to_pydatetime(endtime) if isinstance(endtime, str) else endtime
+    if isinstance(starttime, str):
+        start = utils.to_pydatetime(starttime)
+    elif isinstance(starttime, datetime.datetime):
+        start = starttime
+    else:
+        raise LinkError('Unsupported starttime format')
+
+    if isinstance(endtime, str):
+        end = utils.to_pydatetime(endtime)
+    elif isinstance(endtime, datetime.datetime):
+        end = endtime
+    else:
+        raise LinkError('Unsupported endtime format')
 
     if isinstance(channel, (list, tuple)):
         channels = channel

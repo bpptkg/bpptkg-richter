@@ -1,5 +1,6 @@
 import os
 import unittest
+import datetime
 from richter.link import ArcLinkClient, stream_manager
 
 
@@ -83,6 +84,72 @@ class ArcLinkTest(unittest.TestCase):
         self.assertEqual(client.address, '192.168.0.25:18001')
         self.assertEqual(client.user, 'user')
         self.assertEqual(client.data_format, 'mseed')
+
+    def test_date_format(self):
+        client = ArcLinkClient(address='192.168.0.25:18000',
+                               user='user',
+                               data_format='mseed')
+
+        client.request(starttime='2019-01-01 00:00:00',
+                       endtime='2019-01-01 01:00:00',
+                       network='VG',
+                       station='MEPAS',
+                       channel='HHZ')
+        client.request_file = '/tmp/req.txt'
+        client._build_request_file()
+        stream_list = '2019,01,01,00,00,00 2019,01,01,01,00,00 VG MEPAS HHZ 00\n'
+        with open('/tmp/req.txt', 'r') as buf:
+            content = buf.read()
+        self.assertEqual(content, stream_list)
+
+        client.clear_request()
+        client.request(starttime=datetime.datetime(2019, 1, 1, 0, 0, 0),
+                       endtime=datetime.datetime(2019, 1, 1, 1, 0, 0),
+                       network='VG',
+                       station='MEPAS',
+                       channel='HHZ')
+        client.request_file = '/tmp/req.txt'
+        client._build_request_file()
+        stream_list = '2019,01,01,00,00,00 2019,01,01,01,00,00 VG MEPAS HHZ 00\n'
+        with open('/tmp/req.txt', 'r') as buf:
+            content = buf.read()
+        self.assertEqual(content, stream_list)
+
+        with self.assertRaises(ValueError):
+            client.clear_request()
+            client.request(
+                starttime='',
+                endtime='',
+                network='VG',
+                station='MEPAS',
+                channel='HHZ'
+            )
+            client.request_file = '/tmp/req.txt'
+            client._build_request_file()
+
+        with self.assertRaises(ValueError):
+            client.clear_request()
+            client.request(
+                starttime='2019-10-01 25:12:13',
+                endtime='2019-10-01 11:13:13',
+                network='VG',
+                station='MEPAS',
+                channel='HHZ'
+            )
+            client.request_file = '/tmp/req.txt'
+            client._build_request_file()
+
+        with self.assertRaises(ValueError):
+            client.clear_request()
+            client.request(
+                starttime='2019-10-01 11:12:13',
+                endtime='2019-10-01 25:13:13',
+                network='VG',
+                station='MEPAS',
+                channel='HHZ'
+            )
+            client.request_file = '/tmp/req.txt'
+            client._build_request_file()
 
 
 if __name__ == '__main__':
