@@ -58,6 +58,14 @@ class SeedLinkClientTest(unittest.TestCase):
         ]
         self.assertListEqual(client._build_cli_arguments(), cli_arguments)
 
+    def test_instantiate_class(self):
+        client = SeedLinkClient(
+            address='192.168.0.25:18000',
+            data_format='mseed'
+        )
+        self.assertEqual(client.address, '192.168.0.25:18000')
+        self.assertEqual(client.data_format, 'mseed')
+
 
 if __name__ == '__main__':
     unittest.main()

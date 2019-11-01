@@ -80,6 +80,16 @@ class ArcLinkTest(unittest.TestCase):
             content = buf.read()
         self.assertEqual(content, stream_list)
 
+    def test_instantiate_class(self):
+        client = ArcLinkClient(
+            address='192.168.0.25:18001',
+            user='user',
+            data_format='mseed'
+        )
+        self.assertEqual(client.address, '192.168.0.25:18001')
+        self.assertEqual(client.user, 'user')
+        self.assertEqual(client.data_format, 'mseed')
+
 
 if __name__ == '__main__':
     unittest.main()
