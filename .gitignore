@@ -2,6 +2,7 @@
 .coverage
 .tox/
 .vscode/
+.pytest_cache/
 __pycache__
 build/
 docs/_build/
