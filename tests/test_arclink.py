@@ -20,11 +20,6 @@ class ArcLinkTest(unittest.TestCase):
             content = buf.read()
         self.assertEqual(content, stream_list)
 
-    def test__build_cli(self):
-        client = ArcLinkClient()
-        cli = ['/usr/bin/python', find_executable('arclink_fetch')]
-        self.assertListEqual(client._build_cli(), cli)
-
     def test__build_cli_arguments(self):
         client = ArcLinkClient()
         client.request_file = '/tmp/req.txt'

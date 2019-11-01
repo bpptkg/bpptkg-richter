@@ -38,11 +38,6 @@ class SeedLinkClientTest(unittest.TestCase):
         time_window = '2019,01,01,00,00,00:2019,01,01,01,00,00'
         self.assertEqual(client._build_time_window(), time_window)
 
-    def test__build_cli(self):
-        client = SeedLinkClient()
-        self.assertListEqual(client._build_cli(),
-                         [find_executable(client.seedlink_cli)])
-
     def test__build_cli_arguments(self):
         client = SeedLinkClient()
         client.request(starttime='2019-01-01 00:00:00',
