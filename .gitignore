@@ -1,11 +1,13 @@
 *.py[co]
+.coverage
+.tox/
+.vscode/
 __pycache__
 build/
+docs/_build/
+venv/
 dist/
+
 test_settings.py
-.vscode
 TODO
-_build
-_static
-_templates
 *.egg-info
