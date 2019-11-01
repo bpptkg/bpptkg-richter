@@ -262,7 +262,7 @@ class SeedLinkClient(object):
     def __init__(self, **kwargs):
         for key, value in self.default_parameters.items():
             if key in kwargs:
-                new_value = kwargs[value]
+                new_value = kwargs[key]
             else:
                 new_value = value
             setattr(self, key, new_value)
