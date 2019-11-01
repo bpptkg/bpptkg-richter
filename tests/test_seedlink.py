@@ -1,4 +1,5 @@
 import unittest
+import datetime
 from richter.link import SeedLinkClient, LinkError
 
 
@@ -21,11 +22,6 @@ class SeedLinkClientTest(unittest.TestCase):
 
     def test__build_time_window(self):
         client = SeedLinkClient()
-        client.request(starttime='2019-01-01 00:00:00')
-        time_window = '2019,01,01,00,00,00:'
-        self.assertEqual(client._build_time_window(), time_window)
-
-        client.clear_request()
         client.request(starttime='2019-01-01 00:00:00',
                        endtime='2019-01-01 01:00:00')
         time_window = '2019,01,01,00,00,00:2019,01,01,01,00,00'
@@ -123,6 +119,62 @@ class SeedLinkClientTest(unittest.TestCase):
             client._check_request_parameters()
             client._build_cli_with_arguments()
             client._check_required()
+
+    def test_date_format(self):
+        client = SeedLinkClient(address='192.168.0.25:18000',
+                                data_format='mseed')
+
+        client.request(
+            starttime='2019-10-01 11:12:13',
+            endtime='2019-10-01 11:13:13',
+            network='VG',
+            station='MEPAS'
+        )
+        time_window = '2019,10,01,11,12,13:2019,10,01,11,13,13'
+        self.assertEqual(client._build_time_window(), time_window)
+
+        client.clear_request()
+        client.request(
+            starttime=datetime.datetime(2019, 10, 1, 11, 12, 13),
+            endtime=datetime.datetime(2019, 10, 1, 11, 13, 13),
+            network='VG',
+            station='MEPAS'
+        )
+        time_window = '2019,10,01,11,12,13:2019,10,01,11,13,13'
+        self.assertEqual(client._build_time_window(), time_window)
+
+        with self.assertRaises(ValueError):
+            client.clear_request()
+            client.request(
+                starttime='2019-10-01 25:12:13',
+                endtime='2019-10-01 11:13:13',
+                network='VG',
+                station='MEPAS'
+            )
+            time_window = '2019,10,01,11,12,13:2019,10,01,11,13,13'
+            self.assertEqual(client._build_time_window(), time_window)
+
+        with self.assertRaises(ValueError):
+            client.clear_request()
+            client.request(
+                starttime='2019-10-01 11:12:13',
+                endtime='2019-10-01 25:13:13',
+                network='VG',
+                station='MEPAS'
+            )
+            time_window = '2019,10,01,11,12,13:2019,10,01,11,13,13'
+            self.assertEqual(client._build_time_window(), time_window)
+
+        with self.assertRaises(ValueError):
+            client.clear_request()
+            client.request(
+                starttime='',
+                endtime='',
+                network='VG',
+                station='MEPAS'
+            )
+            time_window = '2019,10,01,11,12,13:2019,10,01,11,13,13'
+            self.assertEqual(client._build_time_window(), time_window)
 
 
 if __name__ == '__main__':

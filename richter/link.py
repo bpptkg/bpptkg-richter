@@ -4,6 +4,7 @@ SeedLink and ArcLink client wrapper.
 
 import os
 import sys
+import datetime
 import tempfile
 import subprocess
 from contextlib import contextmanager
@@ -314,12 +315,21 @@ class SeedLinkClient(object):
         starttime = self.request_data['starttime']
         endtime = self.request_data['endtime']
 
-        start = utils.to_pydatetime(starttime) if isinstance(
-            starttime, str) else starttime
-        end = utils.to_pydatetime(endtime) if isinstance(
-            endtime, str) else endtime
+        if isinstance(starttime, str):
+            start = utils.to_pydatetime(starttime)
+        elif isinstance(starttime, datetime.datetime):
+            start = starttime
+        else:
+            raise LinkError('Unsupported starttime format')
 
-        date_format = '%Y,%m,%d,%H,%M,%S'
+        if isinstance(endtime, str):
+            end = utils.to_pydatetime(endtime)
+        elif isinstance(endtime, datetime.datetime):
+            end = endtime
+        else:
+            raise LinkError('Unsupported endtime format')
+
+        date_format = r'%Y,%m,%d,%H,%M,%S'
         time_window = '{starttime}:{endtime}'.format(
             starttime=start.strftime(date_format),
             endtime=end.strftime(date_format) if end else ''
