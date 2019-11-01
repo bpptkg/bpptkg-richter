@@ -18,13 +18,13 @@ __all__ = [
 def filter_stream(stream, **kwargs):
     """
     Filter ObsPy stream object.
-    
+
     :param stream: ObsPy waveform stream object.
     :type stream: :class:`obspy.core.stream.Stream`
     """
     filtered_stream = stream.copy().select(**kwargs)
     if filtered_stream.count() > 1:
-        filtered_stream.merge(method=1)
+        filtered_stream.merge(method=1, fill_value='interpolate')
     return filtered_stream
 
 
@@ -46,7 +46,7 @@ def compute_bpptkg_ml(wa_ampl):
 def compute_wa(stream, station, network='VG', component='Z', **kwargs):
     """
     Compute stream Wood-Anderson amplitude in meter.
-    
+
     :param stream: ObsPy waveform stream object.
     :type stream: :class:`obspy.core.stream.Stream`
     :param station: Seismic station name, e.g. MEPAS, MEGRA, etc.
@@ -72,7 +72,7 @@ def compute_wa(stream, station, network='VG', component='Z', **kwargs):
 def compute_ml(stream, station, network='VG', component='Z', **kwargs):
     """
     Compute Richter magnitude scales.
-    
+
     :param stream: ObsPy waveform stream object.
     :type stream: :class:`obspy.core.stream.Stream`
     :param station: Seismic station name, e.g. MEPAS, MEGRA, etc.
@@ -96,7 +96,7 @@ def compute_ml(stream, station, network='VG', component='Z', **kwargs):
 def compute_app(stream, station, network='VG', component='Z', **kwargs):
     """
     Compute stream amplitude peak to peak.
-    
+
     :param stream: ObsPy waveform stream object.
     :type stream: :class:`obspy.core.stream.Stream`
     :param station: Seismic station name, e.g. MEPAS, MEGRA, etc.
