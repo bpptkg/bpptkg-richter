@@ -12,6 +12,8 @@ __all__ = [
     'compute_wa',
     'compute_ml',
     'compute_app',
+    'compute_seismic_energy',
+    'compute_seismic_energy_from_stream',
 ]
 
 
