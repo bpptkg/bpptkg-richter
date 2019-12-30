@@ -115,3 +115,53 @@ def compute_app(stream, station, network='VG', component='Z', **kwargs):
     app = np.abs(np.min(filtered_stream[0].data)) + \
         np.abs(np.max(filtered_stream[0].data))
     return app
+
+
+def compute_seismic_energy(m):
+    """
+    Compute seismic energy using Gutenberg-Richter equation.
+
+    .. math::
+
+        log E = 11.8 + 1.5M
+
+    where :math:`M` is Richter local magnitude  and :math:`E` is energy in ergs.
+
+    :param m: Richter local magnitude.
+    :type m: float
+    :return: Seismic energy in ergs.
+    :rtype: float
+    """
+    return np.log10(11.8 + 1.5 * m)
+
+
+def compute_seismic_energy_from_stream(stream, station, network='VG',
+                                       component='Z', **kwargs):
+    """
+    Compute seismic energy using Gutenberg-Richter equation using stream as
+    input.
+
+    Seismic energy is computed using the following equation:
+
+    .. math::
+
+        log E = 11.8 + 1.5M
+
+    where :math:`M` is Richter local magnitude  and :math:`E` is energy in ergs.
+
+    :param stream: ObsPy waveform stream object.
+    :type stream: :class:`obspy.core.stream.Stream`
+    :param station: Seismic station name, e.g. MEPAS, MEGRA, etc.
+    :type station: str
+    :param network: Seismic network name, default to VG.
+    :type network: str
+    :param component: Seismic station component, e.g E, N, Z, default to Z.
+    :type component: str
+    :return: Seismic energy in ergs.
+    :rtype: float
+    """
+    ml = compute_ml(stream, station, network=network,
+                    component=component, **kwargs)
+    if ml is None:
+        return None
+    return compute_seismic_energy(ml)
