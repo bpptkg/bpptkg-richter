@@ -427,6 +427,22 @@ def stream_manager(**kwargs):
 
     It yields stream file path if request succeed, and remove request file
     and stream file on exit.
+
+    Example:
+
+    .. code-block:: python
+
+        from obspy import read
+        from richter import stream_manager
+
+        with stream_manager(address='192.168.0.25:18001',
+                            starttime='2019-01-01 00:00:00',
+                            endtime='2019-01-01 01:00:00',
+                            network='VG',
+                            station='MEPAS',
+                            channel='HHZ') as stream_file:
+            stream = read(stream_file)
+            # Then, do something with stream.
     """
     address = kwargs.pop('address', None)
     if address is None:
