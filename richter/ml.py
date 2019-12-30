@@ -134,7 +134,7 @@ def compute_seismic_energy(m):
     :return: Seismic energy in ergs.
     :rtype: float
     """
-    return np.log10(11.8 + 1.5 * m)
+    return 10**(11.8 + 1.5 * m)
 
 
 def compute_seismic_energy_from_stream(stream, station, network='VG',
