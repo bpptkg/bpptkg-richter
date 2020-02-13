@@ -38,3 +38,10 @@ def find_executable(executable, path=None):
         if os.path.isfile(filename):
             return filename
     return None
+
+
+def stringify_parameters(items):
+    """
+    Convert all items in list to string.
+    """
+    return [str(item) for item in items]
