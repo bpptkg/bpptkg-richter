@@ -131,10 +131,10 @@ def compute_seismic_energy(m):
 
     :param m: Richter local magnitude.
     :type m: float
-    :return: Seismic energy in ergs.
+    :return: Seismic energy in factor of :math:`10^{12}` ergs.
     :rtype: float
     """
-    return 10**(11.8 + 1.5 * m)
+    return 10**(11.8 + 1.5 * m) / 10**12
 
 
 def compute_seismic_energy_from_stream(stream, station, network='VG',
@@ -159,7 +159,7 @@ def compute_seismic_energy_from_stream(stream, station, network='VG',
     :type network: str
     :param component: Seismic station component, e.g E, N, Z, default to Z.
     :type component: str
-    :return: Seismic energy in ergs.
+    :return: Seismic energy in factor of :math:`10^{12}` ergs.
     :rtype: float
     """
     ml = compute_ml(stream, station, network=network,
