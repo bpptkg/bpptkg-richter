@@ -1,0 +1,35 @@
+from richter import SeedLinkClient
+
+client = SeedLinkClient(
+    address='192.168.0.25:18000',
+    data_format='mseed'
+)
+
+client.request_many([
+    {
+        'network': 'VG',
+        'station': 'MEPAS',
+    },
+    {
+        'network': 'VG',
+        'station': 'MELAB',
+        'channel': 'HHZ',
+    },
+    {
+        'network': 'VG',
+        'station': 'MEGRA',
+        'channel': 'HHZ',
+    }
+],
+    starttime='2019-07-22 00:00:00',
+    endtime='2019-07-22 01:00:00'
+)
+
+# See all request data
+print(client.request_data)
+
+# Start request to SeedLink server
+client.execute()
+
+# See saved data
+print(client.output_file)
