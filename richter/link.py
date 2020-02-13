@@ -236,12 +236,13 @@ class ArcLinkClient(object):
         """Execute ArcLink request."""
         self._check_required()
         cli_with_args = self._build_cli_with_arguments()
+        safe_cli_with_args = utils.stringify_parameters(cli_with_args)
 
         self._build_request_file()
         if sys.version_info < (3, 5):
-            completed_process = subprocess.call(cli_with_args, **kwargs)
+            completed_process = subprocess.call(safe_cli_with_args, **kwargs)
         else:
-            completed_process = subprocess.run(cli_with_args, **kwargs)
+            completed_process = subprocess.run(safe_cli_with_args, **kwargs)
         return completed_process
 
 
@@ -368,6 +369,7 @@ class SeedLinkClient(object):
             '-tw', self.time_window,
             '-S', self.stream_list,
             '-o', self.output_file,
+            self.address,
         ]
 
     def _build_cli_with_arguments(self):
@@ -391,16 +393,17 @@ class SeedLinkClient(object):
         """
         Prepare SeedLink many stations request.
         """
+        self.request_data['starttime'] = kwargs.pop(
+            'starttime', self.request_data['starttime'])
+        self.request_data['endtime'] = kwargs.pop(
+            'endtime', self.request_data['endtime'])
+
         if stream_list:
             if isinstance(stream_list, (list, tuple)):
                 self.request_data['streams'] = list(stream_list)
             elif isinstance(stream_list, dict):
                 self.request_data['streams'].append(stream_list)
         else:
-            self.request_data['starttime'] = kwargs.pop(
-                'starttime', self.request_data['starttime'])
-            self.request_data['endtime'] = kwargs.pop(
-                'endtime', self.request_data['endtime'])
             self.request_data['streams'].append(kwargs)
 
     def clear_request(self):
@@ -413,10 +416,12 @@ class SeedLinkClient(object):
         cli_with_args = self._build_cli_with_arguments()
         self._check_required()
 
+        safe_cli_with_args = utils.stringify_parameters(cli_with_args)
+
         if sys.version_info < (3, 5):
-            completed_process = subprocess.call(cli_with_args, **kwargs)
+            completed_process = subprocess.call(safe_cli_with_args, **kwargs)
         else:
-            completed_process = subprocess.run(cli_with_args, **kwargs)
+            completed_process = subprocess.run(safe_cli_with_args, **kwargs)
         return completed_process
 
 
@@ -427,6 +432,22 @@ def stream_manager(**kwargs):
 
     It yields stream file path if request succeed, and remove request file
     and stream file on exit.
+
+    Example:
+
+    .. code-block:: python
+
+        from obspy import read
+        from richter import stream_manager
+
+        with stream_manager(address='192.168.0.25:18001',
+                            starttime='2019-01-01 00:00:00',
+                            endtime='2019-01-01 01:00:00',
+                            network='VG',
+                            station='MEPAS',
+                            channel='HHZ') as stream_file:
+            stream = read(stream_file)
+            # Then, do something with stream.
     """
     address = kwargs.pop('address', None)
     if address is None:
