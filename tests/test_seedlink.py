@@ -34,7 +34,7 @@ class SeedLinkClientTest(unittest.TestCase):
         self.assertEqual(client._build_time_window(), time_window)
 
     def test__build_cli_arguments(self):
-        client = SeedLinkClient()
+        client = SeedLinkClient(address='192.168.0.25:18000')
         client.request(starttime='2019-01-01 00:00:00',
                        endtime='2019-01-01 01:00:00')
         client.request(network='VG', station='MEPAS', channel=['HHZ', 'EHZ'])
@@ -45,6 +45,7 @@ class SeedLinkClientTest(unittest.TestCase):
             '-tw', '2019,01,01,00,00,00:2019,01,01,01,00,00',
             '-S', 'VG_MEPAS:HHZ EHZ',
             '-o', '/tmp/data.mseed',
+            '192.168.0.25:18000',
         ]
         self.assertListEqual(client._build_cli_arguments(), cli_arguments)
 
