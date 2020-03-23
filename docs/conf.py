@@ -12,17 +12,18 @@
 #
 import os
 import sys
+import datetime
 sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'bpptkg-richter'
-copyright = '2019, Indra Rudianto'
+copyright = '{}, Indra Rudianto'.format(datetime.datetime.now().year)
 author = 'Indra Rudianto'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = '0.4.0'
 
 
 # -- General configuration ---------------------------------------------------
