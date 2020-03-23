@@ -11,6 +11,7 @@ __all__ = [
     'compute_bpptkg_ml',
     'compute_wa',
     'compute_ml',
+    'compute_analog_ml',
     'compute_app',
     'compute_seismic_energy',
     'compute_seismic_energy_from_stream',
@@ -93,6 +94,27 @@ def compute_ml(stream, station, network='VG', component='Z', **kwargs):
     # Convert WA amplitude from meter to mili-meter
     richter_ml = compute_bpptkg_ml(wa_ampl * 1000)
     return richter_ml
+
+
+def compute_analog_ml(p2p_amplitude):
+    """
+    Compute Richter magnitude scales from seismic analog peak-to-peak amplitude.
+
+    The peak-to-peak value must be obtained from DEL (Deles) analog station and
+    in mm unit.
+
+    :param p2p_amplitude: Peak-to-peak amplitude in mm unit.
+    :type p2p_amplitude: float
+    :return: BPPTKG Richter magnitude scale.
+    :rtype: float
+    """
+    # k1, k2, and k3 is correction factors that map DEL amplitude scale to PUS
+    # amplitude scale.
+    k1 = 2800 / (0.13 * 27000)
+    k2 = 20.0 / 50.0
+    k3 = 3981.0 / 7943.0
+    ampl = p2p_amplitude / 2.0
+    return compute_bpptkg_ml(k1 * k2 * k3 * ampl)
 
 
 def compute_app(stream, station, network='VG', component='Z', **kwargs):
