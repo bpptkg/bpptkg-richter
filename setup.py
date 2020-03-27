@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
+import io
 import os
+import re
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
+
+
+with io.open('richter/version.py', 'rt', encoding='utf-8') as f:
+    version = re.search(r"__version__ = '(.*?)'", f.read()).group(1)
 
 
 def read(filename):
@@ -12,7 +18,7 @@ def read(filename):
 
 setup(
     name='bpptkg-richter',
-    version='0.4.0',
+    version=version,
     description=('Python library for computing Richter local magnitude scales '
                  'on BPPTKG seismic network'),
     long_description=read('README.md'),

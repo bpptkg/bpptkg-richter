@@ -13,17 +13,23 @@
 import os
 import sys
 import datetime
+
 sys.path.insert(0, os.path.abspath('..'))
 
 
+def get_package_version():
+    from richter.version import get_version
+    return get_version()
+
 # -- Project information -----------------------------------------------------
+
 
 project = 'bpptkg-richter'
 copyright = '{}, Indra Rudianto'.format(datetime.datetime.now().year)
 author = 'Indra Rudianto'
 
 # The full version, including alpha/beta/rc tags
-release = '0.4.0'
+release = get_package_version()
 
 
 # -- General configuration ---------------------------------------------------
