@@ -342,9 +342,10 @@ Request to the server is default to using ArcLink client.
 Richter Magnitude Scales
 ------------------------
 
-This package also provides a method for computing Richter local magnitude scales
-on BPPTKG seismic network (``VG``). Currently supported stations are ``MEDEL``,
-``MELAB``, ``MEPAS``, ``MEPUS`` and only support ``Z`` component.
+This package provides some utilities computing Richter local magnitude scales on
+BPPTKG seismic network (``VG``). Currently supported stations are ``MEDEL``
+(Deles), ``MELAB`` (Labuhan), ``MEPAS`` (Pasarbubar), and ``MEPUS``
+(Pusunglondon). For current version, it only support ``Z`` component.
 
 You may want to install `ObsPy`_ package, because this package only work on
 ObsPy stream type. Default network is ``VG`` and default component is ``Z``:
@@ -354,6 +355,7 @@ ObsPy stream type. Default network is ``VG`` and default component is ``Z``:
     from obspy import read
     import richter
 
+    # Read single station or multiple stations streams
     stream = read('/path/to/stream.mseed')
 
     # Compute Richter local magnitude for station MEPAS

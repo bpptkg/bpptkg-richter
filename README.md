@@ -1,13 +1,7 @@
 # bpptkg-richter
 
-Python library for computing Richter local magnitude scales on BPPTKG seismic
-network.
-
-## Requirements
-
-* Python 3.5+
-* numpy
-* python-dateutil
+**bpptkg-richter** is a Python library for computing Richter local magnitude
+scales on BPPTKG seismic network.
 
 ## Installation
 
@@ -20,16 +14,18 @@ command:
 
 This package provides some utilities for computing Richter local magnitude
 scales on BPPTKG seismic network (`VG`). Currently supported stations are
-`MEDEL`, `MELAB`, `MEPAS`, `MEPUS` and only support `Z` component.
+`MEDEL` (Deles), `MELAB` (Labuhan), `MEPAS` (Pasarbubar), and `MEPUS`
+(Pusunglondon). For current version, it only support `Z` component.
 
-You may want to install [ObsPy](https://www.obspy.org/) package, because
-this package only work on ObsPy stream type. Default network is `VG` and
-default component is `Z`:
+You may want to install [ObsPy](https://www.obspy.org/) package, because this
+package only work on ObsPy stream type. Default network is `VG` and default
+component is `Z`:
 
 ```python
 from obspy import read
 import richter
 
+# Read single station or multiple stations streams
 stream = read('/path/to/stream.mseed')
 
 # Compute Richter local magnitude for station MEPAS
@@ -73,11 +69,6 @@ the documentation by running these commands:
     cd /path/to/bpptkg-richter/
     pip install -r requirements.txt
     sphinx-build -b html docs/ /path/to/build/
-
-## Support
-
-This project is maintained by Indra Rudianto. If you have any question about
-this project, you can contact him at <indrarudianto.official@gmail.com>.
 
 ## License
 
