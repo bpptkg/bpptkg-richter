@@ -18,9 +18,9 @@ command:
 
 ## Richter Magnitude Scales
 
-This package also provides a method for computing Richter local magnitude scales
-on BPPTKG seismic network (`VG`). Currently supported stations are `MEDEL`,
-`MELAB`, `MEPAS`, `MEPUS` and only support `Z` component.
+This package provides some utilities for computing Richter local magnitude
+scales on BPPTKG seismic network (`VG`). Currently supported stations are
+`MEDEL`, `MELAB`, `MEPAS`, `MEPUS` and only support `Z` component.
 
 You may want to install [ObsPy](https://www.obspy.org/) package, because
 this package only work on ObsPy stream type. Default network is `VG` and
