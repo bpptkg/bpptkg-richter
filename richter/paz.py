@@ -126,5 +126,4 @@ def get_paz(station, component=None):
         paz = copy.deepcopy(PAZ)
         paz[station]['sensitivity'] = sensitivity
         return paz[station]
-    else:
-        return PAZ[station]
+    return PAZ[station]
