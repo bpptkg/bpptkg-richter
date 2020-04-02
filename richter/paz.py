@@ -10,18 +10,14 @@ import copy
 # Sensitivity unit is in count/meter/sec, i.e. by inverting velocity channel
 # value (meter/sec/count) on digitizer calibration sheet.
 #
-# Gain or A0 normalization factor is computed in rad/sec. See BPPTKG dataless
-# projects on how to compute A0 normalization factor from Hz to rad/sec in
-# https://gitlab.com/bpptkg/dataless/blob/master/calib/InstrumentCalibrationISOLA.pdf
+# Gain or A0 normalization factor is computed in rad/sec. To get A0 in rad/sec,
+# we multiply A0[Hz] by (2 pi)^(Np - Nz) where Np and Nz is the number of the
+# (complex) poles and zeros respectively.
 #
 # Poles and zeros unit are also in rad/sec, i.e. by multiplying it with 2pi.
-#
-# Note that this sensitivity only apply to Z channel.
 PAZ = {
-    # Sensitivity is 2080 according to:
-    # P. Bormann: New Manual of Seismological Observatory Practice
-    # IASPEI Chapter 3, page 24
-    # (PITSA has 2800)
+    # Sensitivity is 2080 according to: P. Bormann: New Manual of Seismological
+    # Observatory Practice IASPEI Chapter 3, page 24 (PITSA has 2800)
     'WOOD_ANDERSON': {
         'sensitivity': 2800,
         'gain': 1,
@@ -31,10 +27,10 @@ PAZ = {
             -6.2832 + 4.7124j,
         ],
     },
-    # For station MEPAS and MELAB (broadband seismometer), we obtained poles
-    # and zeros values from sensor and digitizer calibration sheets document.
-    # See BPPTKG dataless projects (https://gitlab.com/bpptkg/dataless)
-    # Note that the sensitivity is given by 2 times (single-ended sensitivity).
+    # For station MEPAS and MELAB (broadband seismometer), we obtained poles and
+    # zeros values from sensor and digitizer calibration sheets document. See
+    # BPPTKG dataless projects (https://gitlab.com/bpptkg/dataless) Note that
+    # the sensitivity is given by 2 times (single-ended sensitivity).
     'MEPAS': {
         'sensitivity': {
             'Z': 994035785.2882704
@@ -64,8 +60,8 @@ PAZ = {
         ],
     },
     # For station MEDEL and MEPUS (short period seismometer), we obtained poles
-    # and zeros values from PDCC NRL tool.
-    # See BPPTKG dataless projects (https://gitlab.com/bpptkg/dataless)
+    # and zeros values from PDCC NRL tool. See BPPTKG dataless projects
+    # (https://gitlab.com/bpptkg/dataless)
     'MEDEL': {
         'sensitivity': {
             'Z': 134645742.0
@@ -88,8 +84,8 @@ PAZ = {
             -4.39800 - 4.48700j,
         ],
     },
-    # For station MEGRA, we obtained poles and zeros from PDCC NRL tool.
-    # Note that the sensitivity is given by 2 times (single-ended sensitivity).
+    # For station MEGRA, we obtained poles and zeros from PDCC NRL tool. Note
+    # that the sensitivity is given by 2 times (single-ended sensitivity).
     'MEGRA': {
         'sensitivity': {
             'Z': 989119683.4817014
