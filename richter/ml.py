@@ -25,12 +25,30 @@ def compute_bpptkg_ml(wa_ampl):
     Compute BPPTKG Richter magnitude scales using Wood-Anderson amplitude.
 
     Note that Wood Anderson zero to peak amplitude (wa_ampl) is in mm.
-    Calibration function log10(A0) for BPPTKG seismic network is 1.4.
+    Calibration function log10(A0) for BPPTKG seismic network is -1.4.
 
     :param wa_ampl: Wood-Anderson zero to peak amplitude in mili-meter.
     :type wa_ampl: float
     :return: BPPTKG Richter magnitude scale.
     :rtype: float
+
+    Richter magnitude scale is computed using the following equation: ::
+
+        ml = log10(wa_ampl) - log10(A0)
+
+    where log10(A0) equal to -1.4 and ml is Richter local magnitude scale.
+
+    Example:
+
+    .. code-block:: python
+
+        from richter import compute_bpptkg_ml
+
+        # Wood Anderson zero to peak amplitude in mm
+        wa_ampl = 5
+
+        ml = compute_bpptkg_ml(wa_ampl)
+        print(ml)
     """
     return np.log10(wa_ampl) + 1.4
 
