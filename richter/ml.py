@@ -13,6 +13,21 @@ def filter_stream(stream, **kwargs):
 
     :param stream: ObsPy waveform stream object.
     :type stream: :class:`obspy.core.stream.Stream`
+
+    Example:
+
+    .. code-block:: python
+
+        from richter import filter_stream
+        from obspy import read
+
+        stream = read('/path/to/stream.msd')
+        print(stream)
+
+        filtered_stream = filter_stream(
+            stream, network='VG', station='MEPAS', component='Z')
+        print(filtered_stream)
+
     """
     filtered_stream = stream.copy().select(**kwargs)
     if filtered_stream.count() > 1:
@@ -49,6 +64,7 @@ def compute_bpptkg_ml(wa_ampl):
 
         ml = compute_bpptkg_ml(wa_ampl)
         print(ml)
+
     """
     return np.log10(wa_ampl) + 1.4
 
@@ -67,6 +83,18 @@ def compute_wa(stream, station, network='VG', component='Z', **kwargs):
     :type component: str
     :return: Wood-Anderson zero to peak amplitude in meter.
     :rtype: float
+
+    Exampe:
+
+    .. code-block:: python
+
+        from richter import compute_wa
+        from obspy import read
+
+        stream = read('/path/to/stream.msd')
+        wa_ampl = compute_wa(stream, 'MEPAS', component='Z')
+        print(wa_ampl)
+
     """
     filtered_stream = filter_stream(stream, station=station, network=network,
                                     component=component, **kwargs)
@@ -93,6 +121,18 @@ def compute_ml(stream, station, network='VG', component='Z', **kwargs):
     :type component: str
     :return: BPPTKG Richter magnitude scale.
     :rtype: float
+
+    Example:
+
+    .. code-block:: python
+
+        from richter import compute_ml
+        from obspy import read
+
+        stream = read('/path/to/stream.msd')
+        ml = compute_ml(stream, 'MEPAS', component='Z')
+        print(ml)
+
     """
     wa_ampl = compute_wa(stream, station, network=network,
                          component=component, **kwargs)
@@ -114,6 +154,17 @@ def compute_analog_ml(p2p_amplitude):
     :type p2p_amplitude: float
     :return: BPPTKG Richter magnitude scale.
     :rtype: float
+
+    Example:
+
+    .. code-block:: python
+
+        from richter import compute_analog_ml
+
+        p2p_amplitude = 50
+        ml = compute_analog_ml(p2p_amplitude)
+        print(ml)
+
     """
     # k1, k2, and k3 is correction factors that map DEL amplitude scale to PUS
     # amplitude scale.
@@ -138,6 +189,18 @@ def compute_app(stream, station, network='VG', component='Z', **kwargs):
     :type component: str
     :return: Stream amplitude peak to peak.
     :rtype: int
+
+    Example:
+
+    .. code-block:: python
+
+        from richter import compute_app
+        from obspy import stream
+
+        stream = read('/path/to/stream.msd')
+        app = compute_app(stream, 'MEPAS', component='Z')
+        print(app)
+
     """
     filtered_stream = filter_stream(stream, station=station, network=network,
                                     component=component, **kwargs)
@@ -162,6 +225,17 @@ def compute_seismic_energy(m):
     :type m: float
     :return: Seismic energy in factor of :math:`10^{12}` ergs.
     :rtype: float
+
+    Example:
+
+    .. code-block:: python
+
+        from richter import compute_seismic_energy
+
+        ml = 1.5
+        energy = compute_seismic_energy(ml)
+        print(energy)
+
     """
     return 10**(11.8 + 1.5 * m) / 10**12
 
@@ -190,6 +264,18 @@ def compute_seismic_energy_from_stream(stream, station, network='VG',
     :type component: str
     :return: Seismic energy in factor of :math:`10^{12}` ergs.
     :rtype: float
+
+    Example:
+
+    .. code-block:: python
+
+        from richter import compute_seismic_energy_from_stream
+        from obspy import read
+
+        stream = read('/path/to/stream.msd')
+        energy = compute_energy_from_stream(stream, 'MEPAS', component='Z')
+        print(energy)
+
     """
     ml = compute_ml(stream, station, network=network,
                     component=component, **kwargs)

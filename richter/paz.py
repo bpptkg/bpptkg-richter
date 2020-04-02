@@ -104,7 +104,21 @@ PAZ = {
 
 
 def get_paz(station, component=None):
-    """Get PAZ response for certain station and component."""
+    """
+    Get PAZ response for certain station and component. If component is None, it
+    returns PAZ info for all components. Otherwise, it returns info for specific
+    component.
+
+    Example:
+
+    .. code-block:: python
+
+        from richter import paz
+
+        paz_info = paz.get_paz('MEPAS', component='Z')
+        print(paz_info)
+
+    """
     if station not in PAZ:
         raise NameError('Unknown station name {}'.format(station))
 
