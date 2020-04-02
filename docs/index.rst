@@ -15,10 +15,3 @@ waveform request over ArcLink and SeedLink protocols.
     support
     license
     references
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

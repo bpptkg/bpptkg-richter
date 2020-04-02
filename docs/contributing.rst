@@ -4,12 +4,12 @@ Contributing
 
 When contributing to this repository, please first discuss the change you wish
 to make via issue, email, or any other method to the owners or maintainers of
-this repository before making a change. It is recommended to create a seperate
+this repository before making a change. It is recommended to create a separate
 branch and propose a change via merge request.
 
 Here are some ways you can contribute:
 
-* by using alpha, beta, and prerelease versions
+* by using alpha, beta, and pre-release versions
 * by reporting bugs and issues
 * by suggesting new features
 * by refactoring code
@@ -19,5 +19,5 @@ Here are some ways you can contribute:
 * by reviewing patches
 * by testing the API
 
-No contributions are too small, any kind of contributions will be highly
+No contribution is too small, any kind of contribution will be highly
 appreciated.
