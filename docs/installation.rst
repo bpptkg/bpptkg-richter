@@ -2,14 +2,14 @@
 Installation
 ============
 
-You can install the package from PyPI using this command:
+You can install the package from PyPI using pip:
 
 .. code-block:: bash
 
     pip install -U bpptkg-richter
 
 You can also install the package from our GitLab repository. Download the latest
-version from GitLab repository and unpack the archive:
+version from GitHub repository and unpack the archive:
 
 .. code-block:: bash
 

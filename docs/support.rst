@@ -2,6 +2,5 @@
 Support
 =======
 
-This project is maintained by Indra Rudianto. If you have any question about
-this project, or you want to contribute to this project, you can contact him
-at <indrarudianto.official@gmail.com>.
+If you found a bug about this project, you can raise an issue in our GitHub
+repository at https://github.com/bpptkg/bpptkg-richter/issues.

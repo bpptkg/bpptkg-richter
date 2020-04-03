@@ -5,8 +5,7 @@ scales on BPPTKG seismic network.
 
 ## Installation
 
-**bpptkg-richter** is available on PyPI, you can install it by typing this
-command:
+Install using pip:
 
     pip install -U bpptkg-richter
 
@@ -63,16 +62,12 @@ app = richter.compute_app(stream, 'MELAB', component='E')
 
 ## Documentation
 
-Full documentation and guides are available at `docs/` directory. You can build
-the documentation by running these commands:
-
-    cd /path/to/bpptkg-richter/
-    pip install -r requirements.txt
-    sphinx-build -b html docs/ /path/to/build/
+Full documentation and guides are available at `docs/` directory and online at
+https://bpptkg-richter.readthedocs.io/en/latest/.
 
 ## License
 
 By contributing to the project, you agree that your contributions will be
 licensed under its MIT license. See
-[LICENSE](https://gitlab.com/bpptkg/bpptkg-richter/blob/master/LICENSE) for
+[LICENSE](https://github.com/bpptkg/bpptkg-richter/blob/master/LICENSE) for
 details.

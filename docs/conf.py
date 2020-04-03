@@ -25,8 +25,8 @@ def get_package_version():
 
 
 project = 'bpptkg-richter'
-copyright = '{}, Indra Rudianto'.format(datetime.datetime.now().year)
-author = 'Indra Rudianto'
+copyright = '{}, BPPTKG'.format(datetime.datetime.now().year)
+author = 'BPPTKG'
 
 # The full version, including alpha/beta/rc tags
 release = get_package_version()

@@ -28,9 +28,9 @@ setup(
         'numpy',
         'python-dateutil',
     ],
-    author='Indra Rudianto',
-    author_email='indrarudianto.official@gmail.com',
-    url='https://gitlab.com/bpptkg/bpptkg-richter',
+    author='BPPTKG',
+    author_email='bpptkg@esdm.go.id',
+    url='https://github.com/bpptkg/bpptkg-richter',
     zip_safe=False,
     packages=find_packages(exclude=['docs', 'tests', 'examples']),
     classifiers=[
