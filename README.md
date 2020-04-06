@@ -1,5 +1,7 @@
 # bpptkg-richter
 
+![](https://github.com/bpptkg/bpptkg-richter/workflows/Build/badge.svg)
+
 **bpptkg-richter** is a Python library for computing Richter local magnitude
 scales on BPPTKG seismic network.
 
