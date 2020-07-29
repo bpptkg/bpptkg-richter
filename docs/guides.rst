@@ -222,8 +222,8 @@ Required request arguments is ``starttime``, ``endtime``, ``network``,
 support one value or a list of multiple values. Note that all request time is in
 UTC time zone.
 
-If you want to edit request data, you can all the ``request`` method again
-and provide new keyword argument. It is similar with using ArcLink client:
+If you want to edit request data, you can call the ``request`` method again and
+provide new keyword argument. It is similar with using ArcLink client:
 
 .. code-block:: python
 
