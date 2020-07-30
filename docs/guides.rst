@@ -34,7 +34,7 @@ ArcLink protocol:
 
     client = ArcLinkClient(
         address='192.168.0.25:18001',
-        user='indrarudianto.official@gmail.com',
+        user='user',
         data_format='mseed'
     )
 
@@ -56,9 +56,9 @@ ArcLink protocol:
     print(client.output_file)
 
 
-Required request arguments is ``starttime``, ``endtime``, ``network``,
-``station``, and ``channel``. You can also add ``location`` argument (default:
-00). It is optional. Note that all request time is in UTC time zone.
+Required request arguments are ``starttime``, ``endtime``, ``network``,
+``station``, and ``channel``. You can also add optional ``location`` argument
+(default: ``00``). Note that all request time is in UTC time zone.
 
 Station channel can be a list of multiple values, for example:
 
@@ -72,13 +72,13 @@ Station channel can be a list of multiple values, for example:
         channel=['HHZ', 'EHZ', 'NHZ']
     )
 
-After you call ``request`` method, you have to call ``execute`` method in order
-to make an actual request to the ArcLink server. ``execute`` method return
-Python `CompletedProcess`_ and always have return code 0 if request succeed.
+After you've called ``request`` method, you have to call ``execute`` method in
+order to make an actual request to the ArcLink server. ``execute`` method return
+Python `CompletedProcess`_ and always has return code 0 if request succeed.
 
-Sometime after you call ``request`` method, you want to edit the request data.
-You can call the ``request`` method again and provide new argument you want
-to edit:
+Sometime after you've called ``request`` method, you want to edit the request
+data. You can call the ``request`` method again and provide a new keyword
+argument value you want to edit:
 
 .. code-block:: python
 
@@ -104,7 +104,7 @@ use ``request_many`` method and provide a list of dictionary of request data:
 
     client = ArcLinkClient(
         address='192.168.0.25:18001',
-        user='indrarudianto.official@gmail.com',
+        user='user',
         data_format='mseed'
     )
 
@@ -218,12 +218,12 @@ SeedLink protocol:
     print(client.output_file)
 
 Required request arguments is ``starttime``, ``endtime``, ``network``,
-``station``. You can also add ``channel`` argument. It is optional. It is also
-support one value or a list of multiple values. Note that all request time is in
-UTC time zone.
+``station``. You can also add optional ``channel`` argument. It is also support
+one value or a list of multiple values. Note that all request time is in UTC
+time zone.
 
 If you want to edit request data, you can call the ``request`` method again and
-provide new keyword argument. It is similar with using ArcLink client:
+provide a new keyword argument value. It is similar with using ArcLink client:
 
 .. code-block:: python
 
