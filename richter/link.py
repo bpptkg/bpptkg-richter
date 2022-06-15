@@ -95,6 +95,8 @@ def build_request_file(
 
 class ArcLinkClient(object):
     """
+    .. warning:: This class is deprecated and will be removed in future.
+
     ArcLink client wrapper.
 
     This client wrap arclink_fetch command to request time window-based data
@@ -255,6 +257,8 @@ class ArcLinkClient(object):
 
 class SeedLinkClient(object):
     """
+    .. warning:: This class is deprecated and will be removed in future.
+
     SeedLink client wrapper.
 
     This client is not intended to record data by realtime, but to request
@@ -441,26 +445,26 @@ class SeedLinkClient(object):
 @contextmanager
 def stream_manager(**kwargs):
     """
+    .. warning::
+
+        This function is deprecated and will be removed in future releases.
+
     Context manager of ArcLinkClient class.
 
-    It yields stream file path if request succeed, and remove request file
-    and stream file on exit.
+    It yields stream file path if request succeed, and remove request file and
+    stream file on exit.
 
     Example:
 
     .. code-block:: python
 
-        from obspy import read
-        from richter import stream_manager
+        from obspy import read from richter import stream_manager
 
         with stream_manager(address='192.168.0.25:18001',
-                            starttime='2019-01-01 00:00:00',
-                            endtime='2019-01-01 01:00:00',
-                            network='VG',
-                            station='MEPAS',
+                            starttime='2019-01-01 00:00:00', endtime='2019-01-01
+                            01:00:00', network='VG', station='MEPAS',
                             channel='HHZ') as stream_file:
-            stream = read(stream_file)
-            # Then, do something with stream.
+            stream = read(stream_file) # Then, do something with stream.
     """
     address = kwargs.pop("address", None)
     if address is None:
