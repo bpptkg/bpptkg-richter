@@ -31,7 +31,7 @@ def filter_stream(stream, **kwargs):
     """
     filtered_stream = stream.copy().select(**kwargs)
     if filtered_stream.count() > 1:
-        filtered_stream.merge(method=1, fill_value='interpolate')
+        filtered_stream.merge(method=1, fill_value="interpolate")
     return filtered_stream
 
 
@@ -69,7 +69,7 @@ def compute_bpptkg_ml(wa_ampl):
     return np.log10(wa_ampl) + 1.4
 
 
-def compute_wa(stream, station, network='VG', component='Z', **kwargs):
+def compute_wa(stream, station, network="VG", component="Z", **kwargs):
     """
     Compute stream Wood-Anderson amplitude in meter.
 
@@ -96,18 +96,21 @@ def compute_wa(stream, station, network='VG', component='Z', **kwargs):
         print(wa_ampl)
 
     """
-    filtered_stream = filter_stream(stream, station=station, network=network,
-                                    component=component, **kwargs)
+    filtered_stream = filter_stream(
+        stream, station=station, network=network, component=component, **kwargs
+    )
     if not filtered_stream:
         return None
-    filtered_stream.simulate(paz_remove=paz.get_paz(station, component),
-                             paz_simulate=paz.PAZ['WOOD_ANDERSON'],
-                             water_level=0.0)
+    filtered_stream.simulate(
+        paz_remove=paz.get_paz(station, component),
+        paz_simulate=paz.PAZ["WOOD_ANDERSON"],
+        water_level=0.0,
+    )
     wa_ampl = np.max(np.abs(filtered_stream[0].data))
     return wa_ampl
 
 
-def compute_ml(stream, station, network='VG', component='Z', **kwargs):
+def compute_ml(stream, station, network="VG", component="Z", **kwargs):
     """
     Compute Richter magnitude scales.
 
@@ -134,8 +137,9 @@ def compute_ml(stream, station, network='VG', component='Z', **kwargs):
         print(ml)
 
     """
-    wa_ampl = compute_wa(stream, station, network=network,
-                         component=component, **kwargs)
+    wa_ampl = compute_wa(
+        stream, station, network=network, component=component, **kwargs
+    )
     if not wa_ampl:
         return None
     # Convert WA amplitude from meter to mili-meter
@@ -175,7 +179,7 @@ def compute_analog_ml(p2p_amplitude):
     return compute_bpptkg_ml(k1 * k2 * k3 * ampl)
 
 
-def compute_app(stream, station, network='VG', component='Z', **kwargs):
+def compute_app(stream, station, network="VG", component="Z", **kwargs):
     """
     Compute stream amplitude peak to peak.
 
@@ -202,12 +206,14 @@ def compute_app(stream, station, network='VG', component='Z', **kwargs):
         print(app)
 
     """
-    filtered_stream = filter_stream(stream, station=station, network=network,
-                                    component=component, **kwargs)
+    filtered_stream = filter_stream(
+        stream, station=station, network=network, component=component, **kwargs
+    )
     if not filtered_stream:
         return None
-    app = np.abs(np.min(filtered_stream[0].data)) + \
-        np.abs(np.max(filtered_stream[0].data))
+    app = np.abs(np.min(filtered_stream[0].data)) + np.abs(
+        np.max(filtered_stream[0].data)
+    )
     return app
 
 
@@ -237,11 +243,12 @@ def compute_seismic_energy(m):
         print(energy)
 
     """
-    return 10**(11.8 + 1.5 * m) / 10**12
+    return 10 ** (11.8 + 1.5 * m) / 10**12
 
 
-def compute_seismic_energy_from_stream(stream, station, network='VG',
-                                       component='Z', **kwargs):
+def compute_seismic_energy_from_stream(
+    stream, station, network="VG", component="Z", **kwargs
+):
     """
     Compute seismic energy using Gutenberg-Richter equation using stream as
     input.
@@ -277,8 +284,7 @@ def compute_seismic_energy_from_stream(stream, station, network='VG',
         print(energy)
 
     """
-    ml = compute_ml(stream, station, network=network,
-                    component=component, **kwargs)
+    ml = compute_ml(stream, station, network=network, component=component, **kwargs)
     if ml is None:
         return None
     return compute_seismic_energy(ml)

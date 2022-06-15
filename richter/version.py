@@ -2,7 +2,7 @@
 Package version module.
 """
 
-__version__ = '0.4.0'
+__version__ = "0.4.0"
 
 
 def get_version():
@@ -12,4 +12,4 @@ def get_version():
 
 def get_version_as_tuple():
     """Get package version as tuple."""
-    return tuple(map(int, __version__.split('.')))
+    return tuple(map(int, __version__.split(".")))

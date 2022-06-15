@@ -14,11 +14,20 @@ from . import utils
 
 class LinkError(Exception):
     """Base link client wrapper error exception."""
+
     pass
 
 
-def build_request_file(starttime, endtime, network, station, channel,
-                       location='00', request_file=None, mode='a'):
+def build_request_file(
+    starttime,
+    endtime,
+    network,
+    station,
+    channel,
+    location="00",
+    request_file=None,
+    mode="a",
+):
     """
     Build ArcLink request file.
 
@@ -40,7 +49,7 @@ def build_request_file(starttime, endtime, network, station, channel,
     information, see the following ArcLink CLI client documentation at
     https://www.seiscomp3.org/doc/jakarta/current/apps/arclink_fetch.html.
     """
-    date_format = '%Y,%m,%d,%H,%M,%S'
+    date_format = "%Y,%m,%d,%H,%M,%S"
     if not request_file:
         filename = utils.generate_safe_random_filename()
         path = os.path.join(tempfile.gettempdir(), filename)
@@ -52,35 +61,35 @@ def build_request_file(starttime, endtime, network, station, channel,
     elif isinstance(starttime, datetime.datetime):
         start = starttime
     else:
-        raise LinkError('Unsupported starttime format')
+        raise LinkError("Unsupported starttime format")
 
     if isinstance(endtime, str):
         end = utils.to_pydatetime(endtime)
     elif isinstance(endtime, datetime.datetime):
         end = endtime
     else:
-        raise LinkError('Unsupported endtime format')
+        raise LinkError("Unsupported endtime format")
 
     if isinstance(channel, (list, tuple)):
         channels = channel
     elif isinstance(channel, str):
         channels = [channel]
     else:
-        raise LinkError(
-            'Stream channel does not support {} type'.format(type(channel)))
+        raise LinkError("Stream channel does not support {} type".format(type(channel)))
 
     with open(path, mode) as buf:
         for sta_channel in channels:
             buf.write(
-                '{starttime} {endtime} {network} '
-                '{station} {channel} {location}\n'.format(
+                "{starttime} {endtime} {network} "
+                "{station} {channel} {location}\n".format(
                     starttime=start.strftime(date_format),
                     endtime=end.strftime(date_format),
                     network=network,
                     station=station,
                     channel=sta_channel,
-                    location=location
-                ))
+                    location=location,
+                )
+            )
     return path
 
 
@@ -97,23 +106,23 @@ class ArcLinkClient(object):
     https://www.seiscomp3.org/doc/applications/arclink_fetch.html
     """
 
-    name = 'arclink'
+    name = "arclink"
     default_parameters = {
-        'address': None,
-        'request_format': 'native',
-        'data_format': 'mseed',
-        'preferred_sample_rate': None,
-        'label': None,
-        'no_resp_dict': False,
-        'rebuild_volume': False,
-        'proxy': False,
-        'timeout': 300,
-        'retries': 5,
-        'user': None,
-        'output_file': None
+        "address": None,
+        "request_format": "native",
+        "data_format": "mseed",
+        "preferred_sample_rate": None,
+        "label": None,
+        "no_resp_dict": False,
+        "rebuild_volume": False,
+        "proxy": False,
+        "timeout": 300,
+        "retries": 5,
+        "user": None,
+        "output_file": None,
     }
-    arclink_cli = 'arclink_fetch'
-    python_cmd = '/usr/bin/python'
+    arclink_cli = "arclink_fetch"
+    python_cmd = "/usr/bin/python"
 
     def __init__(self, **kwargs):
         for key, value in self.default_parameters.items():
@@ -122,31 +131,35 @@ class ArcLinkClient(object):
             else:
                 new_value = value
             setattr(self, key, new_value)
-        self.request_file = kwargs.pop('request_file', None)
-        self.output_path = kwargs.pop('output_path', None)
+        self.request_file = kwargs.pop("request_file", None)
+        self.output_path = kwargs.pop("output_path", None)
         self.request_data = []
 
     def _check_required(self):
-        required_parameters = ['address', 'user']
+        required_parameters = ["address", "user"]
         for name in required_parameters:
             if not getattr(self, name):
-                raise LinkError('Parameter {} is required'.format(name))
+                raise LinkError("Parameter {} is required".format(name))
 
         if not os.path.isfile(self.python_cmd):
-            self.python_cmd = utils.find_executable('python')
+            self.python_cmd = utils.find_executable("python")
             assert sys.version_info < (3, 0), (
-                'Python version 2.x is required to run arclink_fetch. '
-                'Make sure you have Python version 2.x installed. '
-                'Default Python executable is in /usr/bin/python.'
+                "Python version 2.x is required to run arclink_fetch. "
+                "Make sure you have Python version 2.x installed. "
+                "Default Python executable is in /usr/bin/python."
             )
 
     def _check_request_parameters(self, item):
         required_request_parameters = [
-            'starttime', 'endtime', 'network', 'station', 'channel']
+            "starttime",
+            "endtime",
+            "network",
+            "station",
+            "channel",
+        ]
         for name in required_request_parameters:
             if item.get(name) is None:
-                raise LinkError(
-                    'Request parameter {} is required'.format(name))
+                raise LinkError("Request parameter {} is required".format(name))
 
     def _build_request_file(self):
         if os.path.exists(self.request_file):
@@ -156,19 +169,20 @@ class ArcLinkClient(object):
             self._check_request_parameters(request)
 
             build_request_file(
-                request['starttime'],
-                request['endtime'],
-                request['network'],
-                request['station'],
-                request['channel'],
-                location=request.get('location', '00'),
+                request["starttime"],
+                request["endtime"],
+                request["network"],
+                request["station"],
+                request["channel"],
+                location=request.get("location", "00"),
                 request_file=self.request_file,
-                mode='a')
+                mode="a",
+            )
 
     def _build_cli(self):
         arclink_cmd = utils.find_executable(self.arclink_cli)
         if arclink_cmd is None:
-            raise LinkError('Could not find arclink_fetch executable')
+            raise LinkError("Could not find arclink_fetch executable")
         return [self.python_cmd, arclink_cmd]
 
     def _build_cli_arguments(self):
@@ -176,26 +190,26 @@ class ArcLinkClient(object):
             self.output_path = tempfile.gettempdir()
         if self.request_file is None:
             self.request_file = os.path.join(
-                self.output_path,
-                utils.generate_safe_random_filename())
-        output_file = utils.generate_safe_random_filename(
-            self.data_format)
+                self.output_path, utils.generate_safe_random_filename()
+            )
+        output_file = utils.generate_safe_random_filename(self.data_format)
         if self.output_file is None:
             self.output_file = os.path.join(self.output_path, output_file)
 
         args = []
-        underscore = '_'
-        dash = '-'
+        underscore = "_"
+        dash = "-"
         for name in self.default_parameters:
             value = getattr(self, name)
             if value:
                 if isinstance(value, bool):
-                    arg_format = '--{name}'
+                    arg_format = "--{name}"
                 else:
-                    arg_format = '--{name}={value}'
+                    arg_format = "--{name}={value}"
 
-                args.append(arg_format.format(
-                    name=name.replace(underscore, dash), value=value))
+                args.append(
+                    arg_format.format(name=name.replace(underscore, dash), value=value)
+                )
         return args + [self.request_file]
 
     def _build_cli_with_arguments(self):
@@ -251,18 +265,18 @@ class SeedLinkClient(object):
     https://www.seiscomp3.org/doc/applications/slinktool.html
     """
 
-    name = 'seedlink'
+    name = "seedlink"
     default_parameters = {
-        'address': None,
-        'delay': 30,
-        'timeout': 60,
-        'data_format': 'mseed',
-        'stream_list': None,
-        'time_window': None,
-        'output_file': None,
-        'output_path': None,
+        "address": None,
+        "delay": 30,
+        "timeout": 60,
+        "data_format": "mseed",
+        "stream_list": None,
+        "time_window": None,
+        "output_file": None,
+        "output_path": None,
     }
-    seedlink_cli = 'slinktool'
+    seedlink_cli = "slinktool"
 
     def __init__(self, **kwargs):
         for key, value in self.default_parameters.items():
@@ -272,78 +286,75 @@ class SeedLinkClient(object):
                 new_value = value
             setattr(self, key, new_value)
 
-        self.request_data = {'streams': [], 'starttime': None, 'endtime': None}
+        self.request_data = {"streams": [], "starttime": None, "endtime": None}
 
     def _check_required(self):
-        required_parameters = ['stream_list', 'time_window']
+        required_parameters = ["stream_list", "time_window"]
         for name in required_parameters:
             if not getattr(self, name):
-                raise LinkError('Parameter {} is required'.format(name))
+                raise LinkError("Parameter {} is required".format(name))
 
     def _check_request_parameters(self):
-        if self.request_data['starttime'] is None:
-            raise LinkError('Parameter starttime is required')
-        if self.request_data['endtime'] is None:
-            raise LinkError('Parameter endtime is required')
+        if self.request_data["starttime"] is None:
+            raise LinkError("Parameter starttime is required")
+        if self.request_data["endtime"] is None:
+            raise LinkError("Parameter endtime is required")
 
     def _check_netsta(self, item):
-        required_request_parameters = ['network', 'station']
+        required_request_parameters = ["network", "station"]
         for name in required_request_parameters:
             if not item.get(name):
-                raise LinkError(
-                    'Request parameter {} is required'.format(name))
+                raise LinkError("Request parameter {} is required".format(name))
 
     def _build_stream_list(self):
         streams = []
-        selector_template = ':{channel}'
-        for stream in self.request_data['streams']:
+        selector_template = ":{channel}"
+        for stream in self.request_data["streams"]:
             self._check_netsta(stream)
 
-            network = stream.get('network')
-            station = stream.get('station')
-            channel = stream.get('channel')
-            netsta = '{network}_{station}'.format(
-                network=network, station=station)
+            network = stream.get("network")
+            station = stream.get("station")
+            channel = stream.get("channel")
+            netsta = "{network}_{station}".format(network=network, station=station)
 
             if isinstance(channel, (list, tuple)):
-                selector = selector_template.format(
-                    channel=' '.join(map(str, channel)))
+                selector = selector_template.format(channel=" ".join(map(str, channel)))
             elif isinstance(channel, str):
                 selector = selector_template.format(channel=channel)
             else:
-                selector = ''
+                selector = ""
             streams.append(netsta + selector)
-        return ','.join(map(str, streams))
+        return ",".join(map(str, streams))
 
     def _build_time_window(self):
-        starttime = self.request_data['starttime']
-        endtime = self.request_data['endtime']
+        starttime = self.request_data["starttime"]
+        endtime = self.request_data["endtime"]
 
         if isinstance(starttime, str):
             start = utils.to_pydatetime(starttime)
         elif isinstance(starttime, datetime.datetime):
             start = starttime
         else:
-            raise LinkError('Unsupported starttime format')
+            raise LinkError("Unsupported starttime format")
 
         if isinstance(endtime, str):
             end = utils.to_pydatetime(endtime)
         elif isinstance(endtime, datetime.datetime):
             end = endtime
         else:
-            raise LinkError('Unsupported endtime format')
+            raise LinkError("Unsupported endtime format")
 
-        date_format = r'%Y,%m,%d,%H,%M,%S'
-        time_window = '{starttime}:{endtime}'.format(
+        date_format = r"%Y,%m,%d,%H,%M,%S"
+        time_window = "{starttime}:{endtime}".format(
             starttime=start.strftime(date_format),
-            endtime=end.strftime(date_format) if end else ''
+            endtime=end.strftime(date_format) if end else "",
         )
         return time_window
 
     def _build_cli(self):
         seedlink_cmd = utils.find_executable(self.seedlink_cli)
         if seedlink_cmd is None:
-            raise LinkError('Could not find slinktool executable')
+            raise LinkError("Could not find slinktool executable")
         return [seedlink_cmd]
 
     def _build_cli_arguments(self):
@@ -357,11 +368,16 @@ class SeedLinkClient(object):
             output_file = utils.generate_safe_random_filename(self.data_format)
             self.output_file = os.path.join(self.output_path, output_file)
         return [
-            '-nd', self.delay,
-            '-nt', self.timeout,
-            '-tw', self.time_window,
-            '-S', self.stream_list,
-            '-o', self.output_file,
+            "-nd",
+            self.delay,
+            "-nt",
+            self.timeout,
+            "-tw",
+            self.time_window,
+            "-S",
+            self.stream_list,
+            "-o",
+            self.output_file,
             self.address,
         ]
 
@@ -372,36 +388,40 @@ class SeedLinkClient(object):
         """
         Prepare SeedLink single station request.
         """
-        if not self.request_data['streams']:
-            self.request_data['streams'].append({})
+        if not self.request_data["streams"]:
+            self.request_data["streams"].append({})
 
-        self.request_data['starttime'] = kwargs.pop(
-            'starttime', self.request_data['starttime'])
-        self.request_data['endtime'] = kwargs.pop(
-            'endtime', self.request_data['endtime'])
+        self.request_data["starttime"] = kwargs.pop(
+            "starttime", self.request_data["starttime"]
+        )
+        self.request_data["endtime"] = kwargs.pop(
+            "endtime", self.request_data["endtime"]
+        )
 
-        self.request_data['streams'][0].update(kwargs)
+        self.request_data["streams"][0].update(kwargs)
 
     def request_many(self, stream_list=None, **kwargs):
         """
         Prepare SeedLink many stations request.
         """
-        self.request_data['starttime'] = kwargs.pop(
-            'starttime', self.request_data['starttime'])
-        self.request_data['endtime'] = kwargs.pop(
-            'endtime', self.request_data['endtime'])
+        self.request_data["starttime"] = kwargs.pop(
+            "starttime", self.request_data["starttime"]
+        )
+        self.request_data["endtime"] = kwargs.pop(
+            "endtime", self.request_data["endtime"]
+        )
 
         if stream_list:
             if isinstance(stream_list, (list, tuple)):
-                self.request_data['streams'] = list(stream_list)
+                self.request_data["streams"] = list(stream_list)
             elif isinstance(stream_list, dict):
-                self.request_data['streams'].append(stream_list)
+                self.request_data["streams"].append(stream_list)
         else:
-            self.request_data['streams'].append(kwargs)
+            self.request_data["streams"].append(kwargs)
 
     def clear_request(self):
         """Clear all SeedLink request data."""
-        self.request_data = {'streams': [], 'starttime': None, 'endtime': None}
+        self.request_data = {"streams": [], "starttime": None, "endtime": None}
 
     def execute(self, **kwargs):
         """Execute SeedLink request."""
@@ -442,13 +462,11 @@ def stream_manager(**kwargs):
             stream = read(stream_file)
             # Then, do something with stream.
     """
-    address = kwargs.pop('address', None)
+    address = kwargs.pop("address", None)
     if address is None:
-        raise LinkError('Parameter address is required')
+        raise LinkError("Parameter address is required")
 
-    client = ArcLinkClient(address=address,
-                           user='user',
-                           data_format='mseed')
+    client = ArcLinkClient(address=address, user="user", data_format="mseed")
     client.request_many(**kwargs)
 
     try:
