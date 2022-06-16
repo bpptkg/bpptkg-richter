@@ -55,10 +55,10 @@ PAZ = {
             -502.6548245744 + 0j,
         ],
     },
-    # For station MEDEL and MEPUS (short period seismometer), we obtained poles
+    # For station MEDLS and MEPUS (short period seismometer), we obtained poles
     # and zeros values from PDCC NRL tool. See BPPTKG dataless projects
     # (https://gitlab.com/bpptkg/dataless)
-    "MEDEL": {
+    "MEDLS": {
         "sensitivity": {"Z": 134645742.0},
         "gain": 1,
         "zeros": [0j, 0j],
@@ -76,9 +76,21 @@ PAZ = {
             -4.39800 - 4.48700j,
         ],
     },
-    # For station MEGRA, we obtained poles and zeros from PDCC NRL tool. Note
+    # For stations below, we obtained poles and zeros from PDCC NRL tool. Note
     # that the sensitivity is given by 2 times (single-ended sensitivity).
     "MEGRA": {
+        "sensitivity": {"Z": 989119683.4817014},
+        "gain": 571507691.7712862,
+        "zeros": [0j, 0j],
+        "poles": [
+            -0.1485973325 + 0.1485973325j,
+            -0.1485973325 - 0.1485973325j,
+            -1130.9733552923 + 0j,
+            -1005.3096491487 + 0j,
+            -502.6548245744 + 0j,
+        ],
+    },
+    "MEDEL": {
         "sensitivity": {"Z": 989119683.4817014},
         "gain": 571507691.7712862,
         "zeros": [0j, 0j],
