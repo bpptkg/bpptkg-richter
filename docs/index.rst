@@ -14,4 +14,5 @@ waveform request over ArcLink and SeedLink protocols.
     contributing
     support
     license
+    stations
     references

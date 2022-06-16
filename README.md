@@ -13,11 +13,6 @@ Install using pip:
 
 ## Richter Magnitude Scales
 
-This package provides some utilities for computing Richter local magnitude
-scales on BPPTKG seismic network (`VG`). Currently supported stations are
-`MEDEL` (Deles), `MELAB` (Labuhan), `MEPAS` (Pasarbubar), and `MEPUS`
-(Pusunglondon). For current version, it only support `Z` component.
-
 You may want to install [ObsPy](https://www.obspy.org/) package, because this
 package only work on ObsPy stream type. Default network is `VG` and default
 component is `Z`:
